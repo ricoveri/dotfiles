@@ -2,5 +2,7 @@
 # Settings for rancher desktop
 #####################
 
-rancher_desktop_bin_dir="~/.rd/bin"
-[ -d "${rancher_desktop_bin_dir}" ] && export PATH=${rancher_desktop_bin_dir}:$PATH
+rancher_desktop_bin_dir="${HOME}/.rd/bin"
+if [[ -d "${rancher_desktop_bin_dir}" ]]; then
+    export PATH=${rancher_desktop_bin_dir}:$PATH
+fi
