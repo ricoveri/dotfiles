@@ -6,10 +6,10 @@ if which go > /dev/null 2>&1; then
     # Set the GOROOT to the location where go is installed
     export GOROOT=$(go env GOROOT)
 
-    # Add the go binary to the path
-    export PATH=$GOROOT/bin:$PATH
-
     # Set the GOPATH to the default location
     export GOPATH=~/Projects/golang
+
+    # Add the go binary to the path
+    export PATH=$GOPATH/bin:$PATH
 fi
 
