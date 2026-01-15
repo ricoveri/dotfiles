@@ -5,15 +5,15 @@
 # see: ~/.dotenv
 ############################################
 
-if ! `which dotenv` > /dev/null 2>&1; then
-    if `which cargo` > /dev/null 2>&1; then
-        # Install dotenv tool via cargo
-        # see: .local/bin/dotenv project
-        cargo install --path ~/.local/bin/dotenv
-    else
-        echo "dotenv: cannot be installed: cargo not found"
+if `which cargo` > /dev/null 2>&1; then
+    # Install dotenv tool via cargo
+    # see: .local/bin/dotenv project
+    if ! `which envy` > /dev/null 2>&1; then
+        cargo install --git https://github.com/ricoveri/envy
     fi
+else
+    echo "envy: cannot be installed: cargo not found"
 fi
 
 # export all variables from output of dotenv
-eval $(dotenv 2> /dev/null)
+eval $(envy 2> /dev/null)
