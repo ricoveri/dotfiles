@@ -7,7 +7,6 @@
 //!   - Place a `.dotenv` YAML file in your home directory with key-value pairs or arrays.
 //!   - Run this program to output shell export statements for each variable.
 
-use dirs; // Provides functions to get common directories (like home, config, etc.)
 use std::error::Error; // Trait for error handling in Rust
 use std::fs::File; // For working with files (open, create, etc.)
 use std::io::Read; // Trait for reading from files and other sources
@@ -41,7 +40,7 @@ fn get_env_vars() -> Result<Hash, Box<dyn Error>> {
         get_home_directory().ok_or("couldn't determine home directory from environment")?;
 
     // load YAML file
-    let conf_file_path = format!("{}/{}", home_dir, CONF_FILE_NAME);
+        let conf_file_path = format!("{}/{}", home_dir, CONF_FILE_NAME);
     let mut conf_file = File::open(&conf_file_path)?;
     let mut conf_file_data = String::new();
     conf_file.read_to_string(&mut conf_file_data)?;
