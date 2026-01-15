@@ -10,8 +10,8 @@
 use std::error::Error; // Trait for error handling in Rust
 use std::fs::File; // For working with files (open, create, etc.)
 use std::io::Read; // Trait for reading from files and other sources
-use yaml_rust::YamlLoader;
-use yaml_rust::yaml::Hash; // Hash type used for YAML mapping in yaml-rust // Function to load and parse YAML documents
+use yaml_rust::yaml::Hash;
+use yaml_rust::YamlLoader; // Hash type used for YAML mapping in yaml-rust // Function to load and parse YAML documents
 
 // Configuration file name in the user's home directory
 const CONF_FILE_NAME: &str = ".dotenv";
@@ -40,7 +40,7 @@ fn get_env_vars() -> Result<Hash, Box<dyn Error>> {
         get_home_directory().ok_or("couldn't determine home directory from environment")?;
 
     // load YAML file
-        let conf_file_path = format!("{}/{}", home_dir, CONF_FILE_NAME);
+    let conf_file_path = format!("{}/{}", home_dir, CONF_FILE_NAME);
     let mut conf_file = File::open(&conf_file_path)?;
     let mut conf_file_data = String::new();
     conf_file.read_to_string(&mut conf_file_data)?;
