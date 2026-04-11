@@ -1,89 +1,135 @@
 {
-    "title": "Launch apps",
-    "rules": [
+  "title": "Launch apps",
+  "rules": [
+    {
+      "description": "AppLaunch: Launch editor",
+      "manipulators": [
         {
-            "description": "AppLaunch: Launch editor",
-            "manipulators": [
-                {
-                    "type": "basic",
-                    "from": {
-                        "simultaneous": [
-                            {
-                                "key_code": "w"
-                            },
-                            {
-                                "key_code": "e"
-                            }
-                        ],
-                        "modifiers": {
-                            "mandatory": [
-                                "option"
-                            ]
-                        }
-                    },
-                    "to": [
-                        {
-                            "shell_command": "open '/Applications/Neovide.app'"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "description": "AppLaunch: iTerm",
-            "manipulators": [
-                {
-                    "type": "basic",
-                    "from": {
-                        "simultaneous": [
-                            {
-                                "key_code": "w"
-                            },
-                            {
-                                "key_code": "t"
-                            }
-                        ],
-                        "modifiers": {
-                            "mandatory": [
-                                "option"
-                            ]
-                        }
-                    },
-                    "to": [
-                        {
-                            "shell_command": "open '/Applications/iTerm.app'"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "description": "AppLaunch: Chrome",
-            "manipulators": [
-                {
-                    "type": "basic",
-                    "from": {
-                        "simultaneous": [
-                            {
-                                "key_code": "w"
-                            },
-                            {
-                                "key_code": "b"
-                            }
-                        ],
-                        "modifiers": {
-                            "mandatory": [
-                                "option"
-                            ]
-                        }
-                    },
-                    "to": [
-                        {
-                            "shell_command": "open '/Applications/Google Chrome.app'"
-                        }
-                    ]
-                }
-            ]
+          "type": "basic",
+          "from": {
+            "simultaneous": [
+              {
+                "key_code": "w"
+              },
+              {
+                "key_code": "e"
+              }
+            ],
+            "modifiers": {
+              "mandatory": ["option"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open '/Applications/Neovide.app'"
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "description": "AppLaunch: iTerm",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [
+              {
+                "key_code": "w"
+              },
+              {
+                "key_code": "t"
+              }
+            ],
+            "modifiers": {
+              "mandatory": ["option"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open '/Applications/iTerm.app'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "AppLaunch: Chrome",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [
+              {
+                "key_code": "w"
+              },
+              {
+                "key_code": "b"
+              }
+            ],
+            "modifiers": {
+              "mandatory": ["option"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open '/Applications/Google Chrome.app'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "AppLaunch: Obsidian",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [
+              {
+                "key_code": "w"
+              },
+              {
+                "key_code": "o"
+              }
+            ],
+            "modifiers": {
+              "mandatory": ["option"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open '/Applications/Obsidian.app'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "AppLaunch: Slack",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "simultaneous": [
+              {
+                "key_code": "w"
+              },
+              {
+                "key_code": "m"
+              }
+            ],
+            "modifiers": {
+              "mandatory": ["option"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open '/Applications/Slack.app'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
