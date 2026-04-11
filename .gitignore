@@ -1,35 +1,41 @@
+# Dotfiles repo: deny by default, then un-ignore only what you version.
+# Finer rules live in subtree .gitignore files (e.g. .zsh/profile.d/, .config/karabiner/).
+
+# --- deny everything ---
 *
+
+# --- repo meta ---
 !.gitignore
 !.gitconfig
 !README.md
 
-# zsh
+# --- zsh (narrow: only profile.d/ and custom/) ---
 !.zshrc
 !.zshenv
 !.zsh/
-!.zsh/**/
-!.zsh/**/.*
-!.zsh/**/*
+!.zsh/profile.d/
+!.zsh/profile.d/**
+!.zsh/custom/
+!.zsh/custom/**
 
-# tmux
+# --- tmux ---
 !.tmux.conf
-!.tmux/conf.d/**/*
+!.tmux/
+!.tmux/conf.d/
+!.tmux/conf.d/**
 
-# .local
-!.local/
-!.local/bin
-!.local/bin/dotenv/
-!.local/bin/dotenv/*
-!.local/bin/dotenv/src/
-!.local/bin/dotenv/src/*
-!.local/bin/dotenv.py
-
-# karabiner-elements
+# --- Karabiner-Elements ---
+!.config/
 !.config/karabiner/
-!.config/karabiner/**/
-!.config/karabiner/**/.*
-!.config/karabiner/**/*
+!.config/karabiner/**
 
+# --- .local (only dotenv helper + crate) ---
+!.local/
+!.local/bin/
+!.local/bin/dotenv.py
+!.local/bin/dotenv/
+!.local/bin/dotenv/**
 
-# vim/nvim
+# --- editor / OS cruft (under allowlisted trees) ---
 *.swp
+**/.DS_Store
