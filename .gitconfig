@@ -1,6 +1,7 @@
 [user]
 	name  = Alejandro Ricoveri
 	email = alejandroricoveri@gmail.com
+	signingkey = 17BF540D60DA2F3E
 [core]
 	editor = vim
 [push]
@@ -13,3 +14,9 @@
 	insteadOf = https://github.com/
 [url "ssh://git@github.com/"]
     insteadOf = https://github.com/
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[gpg]
+	program = /opt/homebrew/bin/gpg
