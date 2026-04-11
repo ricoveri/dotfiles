@@ -1,0 +1,13 @@
+########################################
+# gpg settings
+########################################
+
+# requirement: install pinentry-mac for better pinentry experience on macOS
+
+# set up proper tty for pinentry to work correctly
+export GPG_TTY=$(tty)
+
+# make sure gpg-agent is running
+if ! pgrep -x "gpg-agent" > /dev/null; then
+  gpg-agent --daemon > /dev/null
+fi

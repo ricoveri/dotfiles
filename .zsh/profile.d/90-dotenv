@@ -5,6 +5,8 @@
 # see: ~/.dotenv
 ############################################
 
+export DOT_ENV_CFG=~/.envyrc.yaml
+
 if `which cargo` > /dev/null 2>&1; then
     # Install dotenv tool via cargo
     # see: .local/bin/dotenv project
