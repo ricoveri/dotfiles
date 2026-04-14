@@ -8,6 +8,7 @@
 !.gitignore
 !.gitconfig
 !README.md
+!AGENTS.md
 
 # --- zsh (narrow: only profile.d/ and custom/) ---
 !.zshrc
