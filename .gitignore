@@ -9,6 +9,7 @@
 !.gitconfig
 !README.md
 !AGENTS.md
+!CLAUDE.md
 
 # --- zsh (narrow: only profile.d/ and custom/) ---
 !.zshrc
