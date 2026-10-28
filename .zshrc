@@ -103,3 +103,7 @@ fi
 # Uncomment if you want to profile startup time
 # zprof
 source /Users/ricoveri/Projects/corp/avallone/looney/completion.zsh
+
+# proto
+export PROTO_HOME=/Users/ricoveri/.proto;
+export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
