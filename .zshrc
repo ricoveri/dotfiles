@@ -102,3 +102,4 @@ fi
 
 # Uncomment if you want to profile startup time
 # zprof
+source /Users/ricoveri/Projects/corp/avallone/looney/completion.zsh
