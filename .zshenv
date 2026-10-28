@@ -30,3 +30,4 @@ if [ -d $ZSH_HOME ]; then
     done
     unset i
 fi
+. "$HOME/.cargo/env"
