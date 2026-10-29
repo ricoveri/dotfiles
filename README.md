@@ -25,6 +25,12 @@ cd dotfiles
 git ls-files -z | xargs -0 -I{} rsync -a --mkpath "{}" "$HOME/{}"
 ```
 
+## Platform-specific files
+
+Files that can't be shared between macOS and Linux (e.g. a gpg config) are kept as two siblings, `<name>.macos` and `<name>.linux`. On shell start, `.zsh/profile.d/04-platform-variants` symlinks `<name>` to the one matching `uname -s`. This applies to tracked files in this repo and to stow packages in `~/.dotsync`. Existing regular files are never overwritten. Set `DOT_PLATFORM=macos|linux` to override detection.
+
+For files in this repo, track only the variants: un-ignore `<name>.macos` / `<name>.linux` in `.gitignore`, not `<name>`.
+
 ## Install dependencies
 
 ### Essentials

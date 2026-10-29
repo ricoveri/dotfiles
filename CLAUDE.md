@@ -24,10 +24,15 @@ Before creating any new file intended to be versioned, un-ignore it in `.gitigno
 | Zsh plugin / alias / function | `.zsh/custom/plugins/` or `.zsh/custom/` |
 | Tmux setting | New file in `.tmux/conf.d/` rather than growing `.tmux.conf` |
 | Karabiner binding | `.config/karabiner/` |
+| File that differs per OS | Sibling `<name>.macos` / `<name>.linux`; `.zsh/profile.d/04-platform-variants` symlinks `<name>` at shell start. Track only the variants (un-ignore them, not `<name>`) |
 
 ## Forbidden paths — never touch
 
-`.ssh/`, `.gnupg/`, `.aws/`, `.pypirc`, `.sensitive/`, shell history files (`.histfile`, `.zsh_history`), caches (`.cache/`, `.npm/`), and large personal folders (`Desktop/`, `Documents/`, `Downloads/`, `Library/`, `Movies/`, `Music/`, `Pictures/`).
+`.ssh/`, `.gnupg/` (sole exception below), `.aws/`, `.pypirc`, `.sensitive/`, shell history files (`.histfile`, `.zsh_history`), caches (`.cache/`, `.npm/`), and large personal folders (`Desktop/`, `Documents/`, `Downloads/`, `Library/`, `Movies/`, `Music/`, `Pictures/`).
+
+### Exception: `gpg-agent.conf*`
+
+Inside `.gnupg/`, and only there, files named `gpg-agent.conf` or `gpg-agent.conf.<suffix>` (e.g. `gpg-agent.conf.macos`, `gpg-agent.conf.linux`) may be read, created, renamed and edited, so platform variants can be managed (see `.zsh/profile.d/04-platform-variants`). Everything else in `.gnupg/` stays off-limits: keys, `private-keys-v1.d/`, `public-keys.d/`, `openpgp-revocs.d/`, `trustdb.gpg`, `common.conf`, `gpg.conf`, sockets, and any other file. Never list, read or dump the rest of the directory.
 
 ## Git notes
 
