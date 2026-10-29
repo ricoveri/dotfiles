@@ -1,0 +1,77 @@
+#####################
+# Platform-specific dotfiles
+#####################
+
+# A file that cannot be shared between platforms is kept as two siblings:
+#   <name>.macos  and  <name>.linux
+# and <name> becomes a relative symlink to the one matching this OS.
+# Real files are never overwritten.
+#
+# Covers both:
+#   - stow packages in ~/.dotsync (see 03-dotprivate)
+#   - tracked files in this repo ($HOME)
+
+# Platform is detected from uname; set DOT_PLATFORM beforehand to override
+case "${DOT_PLATFORM:-$(uname -s)}" in
+    Darwin|macos) DOT_PLATFORM=macos ;;
+    Linux|linux)  DOT_PLATFORM=linux ;;
+esac
+export DOT_PLATFORM
+
+# Link <name> -> <name>.<platform> next to the given variant file
+# Sets _dot_variant_changed=1 if the link had to be (re)created
+_dot_link_variant() {
+    local variant="$1"
+    local link="${variant%.$DOT_PLATFORM}"
+
+    if [ -e "$link" ] && [ ! -L "$link" ]; then
+        echo "dot: $link is a regular file, not replacing it with $variant" >&2
+        return 1
+    fi
+    [ "$(readlink "$link" 2>/dev/null)" = "${variant##*/}" ] && return 0
+
+    ln -sfn "${variant##*/}" "$link" && _dot_variant_changed=1
+}
+
+# Packages in ~/.dotsync
+DOTPRIVATE_DIR="${DOTPRIVATE_DIR:-$HOME/.dotsync}"
+if [ -d "$DOTPRIVATE_DIR" ]; then
+    _dot_changed_pkgs=" "
+    while IFS= read -r _dot_variant; do
+        _dot_variant_changed=0
+        _dot_link_variant "$_dot_variant" || continue
+        _dot_rel="${_dot_variant#$DOTPRIVATE_DIR/}"
+        _dot_rel="${_dot_rel%.$DOT_PLATFORM}"
+
+        # ~/.dotsync is a Syncthing folder: the generated link must stay local,
+        # otherwise each machine would overwrite the other's link
+        grep -qxF "/$_dot_rel" "$DOTPRIVATE_DIR/.stignore" 2>/dev/null \
+            || echo "/$_dot_rel" >> "$DOTPRIVATE_DIR/.stignore"
+
+        # Link is new: stow already ran in 03-dotprivate, so restow this package
+        if [ "$_dot_variant_changed" = 1 ]; then
+            case "$_dot_changed_pkgs" in
+                *" ${_dot_rel%%/*} "*) ;;
+                *) _dot_changed_pkgs="$_dot_changed_pkgs${_dot_rel%%/*} " ;;
+            esac
+        fi
+    done < <(find "$DOTPRIVATE_DIR" -maxdepth 6 \
+        \( -name .stfolder -o -name .git -o -name node_modules \) -prune \
+        -o -type f -name "*.$DOT_PLATFORM" -print 2>/dev/null)
+
+    if command -v stow > /dev/null 2>&1; then
+        for _dot_pkg in ${=_dot_changed_pkgs}; do
+            stow -R -d "$DOTPRIVATE_DIR" -t "$HOME" --ignore='\.(macos|linux)$' "$_dot_pkg"
+        done
+    fi
+fi
+
+# Tracked files in this repo
+if git -C "$HOME" rev-parse --git-dir > /dev/null 2>&1; then
+    while IFS= read -r _dot_variant; do
+        _dot_link_variant "$HOME/$_dot_variant"
+    done < <(git -C "$HOME" ls-files "*.$DOT_PLATFORM" 2>/dev/null)
+fi
+
+unset _dot_variant _dot_variant_changed _dot_rel _dot_pkg _dot_changed_pkgs
+unset -f _dot_link_variant
