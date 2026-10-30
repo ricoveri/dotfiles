@@ -1,15 +1,14 @@
 ############################################
 # Fill the environment with
-# custom variables via dotenv
-# see: .local/bin/dotenv
-# see: ~/.dotenv
+# custom variables via envy
+# see: https://github.com/ricoveri/envy
+# see: ~/.envyrc.yaml
 ############################################
 
 export DOT_ENV_CFG=~/.envyrc.yaml
 
 if `which cargo` > /dev/null 2>&1; then
-    # Install dotenv tool via cargo
-    # see: .local/bin/dotenv project
+    # Install envy via cargo
     if ! `which envy` > /dev/null 2>&1; then
         cargo install --git https://github.com/ricoveri/envy
     fi
@@ -17,5 +16,5 @@ else
     echo "envy: cannot be installed: cargo not found"
 fi
 
-# export all variables from output of dotenv
+# export all variables from output of envy
 eval $(envy 2> /dev/null)

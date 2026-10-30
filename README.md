@@ -9,7 +9,6 @@ This repo is managed with a **deny-by-default** approach: only a small allowlist
 - **Zsh**: `.zshrc`, `.zshenv`, plus modular snippets in `.zsh/profile.d/` and custom plugins in `.zsh/custom/`
 - **Tmux**: `.tmux.conf` with modular config in `.tmux/conf.d/`
 - **Karabiner-Elements**: config under `.config/karabiner/` (when present)
-- **Utilities**: a small `.local/bin/dotenv` helper (when present)
 
 ## Install this repo
 

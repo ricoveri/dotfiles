@@ -31,13 +31,6 @@
 !.config/karabiner/
 !.config/karabiner/**
 
-# --- .local (only dotenv helper + crate) ---
-!.local/
-!.local/bin/
-!.local/bin/dotenv.py
-!.local/bin/dotenv/
-!.local/bin/dotenv/**
-
 # --- editor / OS cruft (under allowlisted trees) ---
 *.swp
 **/.DS_Store
