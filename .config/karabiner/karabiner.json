@@ -226,6 +226,19 @@
                 "type": "basic"
               }
             ]
+          },
+          {
+            "description": "AppLaunch: Orca",
+            "manipulators": [
+              {
+                "from": {
+                  "modifiers": { "mandatory": ["option"] },
+                  "simultaneous": [{ "key_code": "w" }, { "key_code": "q" }]
+                },
+                "to": [{ "shell_command": "open '/Applications/Orca.app'" }],
+                "type": "basic"
+              }
+            ]
           }
         ]
       },
