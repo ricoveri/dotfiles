@@ -33,15 +33,28 @@ For files in this repo, track only the variants: un-ignore `<name>.macos` / `<na
 
 ## Install dependencies
 
+### Bootstrap
+
+`.local/bin/dot-bootstrap` installs everything below on macOS (Homebrew) and Arch-based Linux such as Omarchy (pacman), then sets zsh as the default shell. It is safe to re-run.
+
+```bash
+./.local/bin/dot-bootstrap
+```
+
 ### Essentials
 
-Get these sorted out first ...
+What the bootstrap installs ...
 
+- [Homebrew](https://brew.sh/) (macOS only)
 - [zsh](https://www.zsh.org/)
 - [oh-my-zsh](https://ohmyz.sh/#install)
 - [tmux](https://github.com/tmux/tmux)
 - [tmux plugin manager](https://github.com/tmux-plugins/tpm)
 - [fzf](https://github.com/junegunn/fzf)
+- [gnupg](https://gnupg.org/) and pinentry (`pinentry-mac` on macOS), for signed commits
+- [GNU Stow](https://www.gnu.org/software/stow/), for `~/.dotsync` packages
+- [rustup](https://rustup.rs/), which provides `~/.cargo/env` and cargo
+- [envy](https://github.com/ricoveri/envy), installed through cargo
 
 ## Copyright and Licensing
 

@@ -35,6 +35,7 @@
 !.local/
 !.local/bin/
 !.local/bin/dotenv.py
+!.local/bin/dot-bootstrap
 !.local/bin/dotenv/
 !.local/bin/dotenv/**
 
