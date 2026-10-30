@@ -38,3 +38,12 @@ o.bind("SUPER + H", "Swap window to the left", hl.dsp.window.swap({ direction = 
 o.bind("SUPER + J", "Swap window down", hl.dsp.window.swap({ direction = "d" }))
 o.bind("SUPER + K", "Swap window up", hl.dsp.window.swap({ direction = "u" }))
 o.bind("SUPER + L", "Swap window to the right", hl.dsp.window.swap({ direction = "r" }))
+
+-- Mnemonics: SUPER + W, release, then a letter. W is for "web".
+-- Replaces SUPER+W (was: close window), which is dropped with no replacement.
+hl.unbind("SUPER + W")
+o.bind("SUPER + W", "Web mnemonics", hl.dsp.submap("web"))
+hl.define_submap("web", "reset", function()
+  o.bind("B", "Browser (Chrome): focus or open", { focus = "google-chrome", launch = "google-chrome-stable" })
+  hl.bind("escape", hl.dsp.submap("reset"))
+end)
