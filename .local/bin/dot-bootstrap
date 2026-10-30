@@ -105,7 +105,8 @@ fi
 #####################
 if ! command -v envy > /dev/null 2>&1; then
     log "installing envy"
-    cargo install --git https://github.com/ricoveri/envy
+    # git insteadOf rewrites to ssh; libgit2 can't use it, so shell out to git
+    CARGO_NET_GIT_FETCH_WITH_CLI=true cargo install --git https://github.com/ricoveri/envy
 else
     log "envy already installed"
 fi
