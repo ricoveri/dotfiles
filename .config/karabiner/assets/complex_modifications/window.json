@@ -1,0 +1,25 @@
+{
+  "title": "Window management",
+  "rules": [
+    {
+      "description": "Window: toggle full screen with option + z",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "z",
+            "modifiers": {
+              "mandatory": ["option"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "f",
+              "modifiers": ["left_control", "left_command"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
