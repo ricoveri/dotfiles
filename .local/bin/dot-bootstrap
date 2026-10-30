@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+##################################################################
+# dot-bootstrap: install the essentials these dotfiles depend on
+# Supports: macOS (Homebrew) and Linux (Arch / Omarchy, pacman)
+# Idempotent: safe to re-run
+##################################################################
+
+set -euo pipefail
+
+log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+die() { printf '\033[1;31merror:\033[0m %s\n' "$*" >&2; exit 1; }
+
+# Clone without ~/.gitconfig, whose insteadOf rewrites https to ssh
+# (no SSH key is expected to exist yet)
+git_clone() { GIT_CONFIG_GLOBAL=/dev/null git clone "$@"; }
+
+# Platform is detected from uname; set DOT_PLATFORM to override
+# (same convention as .zsh/profile.d/04-platform-variants)
+case "${DOT_PLATFORM:-$(uname -s)}" in
+    Darwin|macos) platform=macos ;;
+    Linux|linux)  platform=linux ;;
+    *) die "unsupported platform: ${DOT_PLATFORM:-$(uname -s)}" ;;
+esac
+
+#####################
+# Base packages
+#####################
+install_macos() {
+    if ! xcode-select -p > /dev/null 2>&1; then
+        log "installing Xcode command line tools (finish the dialog, then re-run)"
+        xcode-select --install
+        exit 0
+    fi
+
+    # 02-homebrew hardcodes this prefix
+    if [ ! -x /opt/homebrew/bin/brew ]; then
+        log "installing Homebrew"
+        NONINTERACTIVE=1 /bin/bash -c \
+            "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+
+    log "installing packages with brew"
+    brew install zsh tmux fzf gnupg pinentry-mac stow git curl
+}
+
+install_linux() {
+    command -v pacman > /dev/null 2>&1 \
+        || die "only Arch-based distros (Omarchy) are supported: pacman not found"
+
+    log "installing packages with pacman"
+    # base-devel: needed to build envy with cargo
+    sudo pacman -S --needed --noconfirm \
+        zsh tmux fzf gnupg pinentry stow git curl base-devel
+}
+
+case "$platform" in
+    macos) install_macos ;;
+    linux) install_linux ;;
+esac
+
+#####################
+# oh-my-zsh
+#####################
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    log "installing oh-my-zsh"
+    # KEEP_ZSHRC: the tracked .zshrc must not be overwritten
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
+        "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+        "" --unattended
+else
+    log "oh-my-zsh already installed"
+fi
+
+#####################
+# tmux plugin manager
+#####################
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    log "installing tpm"
+    git_clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+else
+    log "tpm already installed"
+fi
+# Fetch the plugins listed in .tmux.conf without opening tmux
+if [ -f "$HOME/.tmux.conf" ]; then
+    log "installing tmux plugins"
+    "$HOME/.tmux/plugins/tpm/bin/install_plugins" || log "tmux plugin install failed, press prefix + I inside tmux"
+fi
+
+#####################
+# rust toolchain
+#####################
+# .zshenv sources ~/.cargo/env unconditionally
+if [ ! -f "$HOME/.cargo/env" ]; then
+    log "installing rustup"
+    curl -fsSL https://sh.rustup.rs | sh -s -- -y --no-modify-path
+else
+    log "rustup already installed"
+fi
+# shellcheck disable=SC1091
+. "$HOME/.cargo/env"
+
+#####################
+# envy (see 90-dotenv)
+#####################
+if ! command -v envy > /dev/null 2>&1; then
+    log "installing envy"
+    cargo install --git https://github.com/ricoveri/envy
+else
+    log "envy already installed"
+fi
+
+#####################
+# default shell
+#####################
+zsh_path="$(command -v zsh)"
+if ! grep -qxF "$zsh_path" /etc/shells; then
+    log "adding $zsh_path to /etc/shells"
+    echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null
+fi
+if [ "${SHELL:-}" != "$zsh_path" ]; then
+    log "setting default shell to $zsh_path"
+    chsh -s "$zsh_path"
+else
+    log "default shell is already zsh"
+fi
+
+cat <<'EOF'
+
+Done. Remaining manual steps:
+  - deploy the dotfiles (see README, "Install this repo")
+  - set up an SSH key for GitHub
+  - import your GPG key (17BF540D60DA2F3E)
+  - log out and back in so the new shell takes effect
+EOF
