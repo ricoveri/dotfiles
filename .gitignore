@@ -31,6 +31,10 @@
 !.config/karabiner/
 !.config/karabiner/**
 
+# --- Hyprland / Omarchy (key bindings only) ---
+!.config/hypr/
+!.config/hypr/bindings.lua
+
 # --- .local (bootstrap script) ---
 !.local/
 !.local/bin/
