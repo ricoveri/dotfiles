@@ -39,6 +39,9 @@ o.bind("SUPER + J", "Swap window down", hl.dsp.window.swap({ direction = "d" }))
 o.bind("SUPER + K", "Swap window up", hl.dsp.window.swap({ direction = "u" }))
 o.bind("SUPER + L", "Swap window to the right", hl.dsp.window.swap({ direction = "r" }))
 
+-- SUPER + U maximizes the window (keeps gaps and bar, unlike SUPER+F fullscreen).
+o.bind("SUPER + U", "Maximize window", hl.dsp.window.fullscreen({ mode = "maximized" }))
+
 -- Mnemonics: SUPER + W, release, then a letter. W is for "web" and "window".
 -- Replaces SUPER+W (was: close window), which moves to SUPER+W, D.
 hl.unbind("SUPER + W")
