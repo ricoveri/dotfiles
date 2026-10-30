@@ -27,7 +27,8 @@
                       "com.todesktop.230313mzl4w4u92",
                       "com\\.microsoft\\.VSCode",
                       "com\\.googlecode\\.iterm2",
-                      "com\\.neovide\\.neovide"
+                      "com\\.neovide\\.neovide",
+                      "com\\.stablyai\\.orca"
                     ],
                     "type": "frontmost_application_if"
                   }

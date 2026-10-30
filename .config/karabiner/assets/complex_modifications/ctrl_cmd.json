@@ -17,7 +17,8 @@
               "type": "frontmost_application_if",
               "bundle_identifiers": [
                 "com\\.microsoft\\.VSCode",
-                "com\\.googlecode\\.iterm2"
+                "com\\.googlecode\\.iterm2",
+                "com\\.stablyai\\.orca"
               ]
             }
           ]
