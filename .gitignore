@@ -31,6 +31,11 @@
 !.config/karabiner/
 !.config/karabiner/**
 
+# --- .local (bootstrap script) ---
+!.local/
+!.local/bin/
+!.local/bin/dot-bootstrap
+
 # --- editor / OS cruft (under allowlisted trees) ---
 *.swp
 **/.DS_Store
