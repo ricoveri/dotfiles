@@ -61,7 +61,8 @@ next_agent = "prefix+a"
 previous_agent = "prefix+shift+a"
 
 # Windows -> tabs
-new_tab = "prefix+c"
+# replaced by herdr-newtab-plus (see [[keys.command]] below)
+new_tab = ""
 rename_tab = "prefix+r"
 close_tab = "prefix+shift+x"
 switch_tab = ["prefix+1..9", "alt+1..9"]
@@ -85,6 +86,13 @@ key = "prefix+space"
 type = "plugin_action"
 command = "herdr-bar.open"
 description = "command bar"
+
+# herdr-newtab-plus folder/agent picker replaces built-in new tab
+[[keys.command]]
+key = "prefix+c"
+type = "plugin_action"
+command = "herdr-newtab-plus.open"
+description = "new tab"
 
 [ui]
 accent = "blue"
