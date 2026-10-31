@@ -57,6 +57,7 @@ plugins=( \
     vi-mode \
     dotools \
     hist \
+    herdr \
     themes \
     fzf \
     )
@@ -85,8 +86,8 @@ fpath=($ZSH_HOME/lib $fpath) && export FPATH
 
 #
 # checks tmux is installed before trying to launch it.
-# NOTE: it won't run if invoked under vscode, neovim, or orca
-if [[ "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "Orca" && -z "$NVIM" ]]; then
+# NOTE: it won't run if invoked under vscode, neovim, orca, or herdr
+if [[ "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "Orca" && -z "$NVIM" && "$HERDR_ENV" != "1" ]]; then
     if which tmux >/dev/null 2>&1; then
         # Attach to existing deattached session or start a new session
         if [[ -z "$TMUX" ]] ;then
