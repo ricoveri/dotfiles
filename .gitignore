@@ -31,6 +31,10 @@
 !.config/karabiner/
 !.config/karabiner/**
 
+# --- herdr (config only; dir also holds sockets, logs, session state) ---
+!.config/herdr/
+!.config/herdr/config.toml
+
 # --- Hyprland / Omarchy (key bindings only) ---
 !.config/hypr/
 !.config/hypr/bindings.lua
