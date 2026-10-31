@@ -56,6 +56,9 @@ resize_pane_right = "ctrl+alt+shift+right"
 # No tmux equivalent; herdr's default prefix+shift+p is taken by previous session
 rename_pane = "prefix+shift+o"
 
+# Goto picker: agents/terminals grouped by workspace
+goto = ["prefix+space", "prefix+g"]
+
 # Agent panel
 next_agent = "prefix+a"
 previous_agent = "prefix+shift+a"
