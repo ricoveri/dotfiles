@@ -37,5 +37,5 @@ Inside `.gnupg/`, and only there, files named `gpg-agent.conf` or `gpg-agent.con
 ## Git notes
 
 - **GPG signing is enabled** for all commits and tags (key `17BF540D60DA2F3E`, uses `/opt/homebrew/bin/gpg`). Commits will fail if the GPG agent is unavailable.
-- `main` and `master` have `pushRemote = no_push` — direct pushes to those branches are blocked by git config.
+- Direct pushes to `main` and `master` are allowed (the old `pushRemote = no_push` guard was removed).
 - Do not commit or push unless explicitly asked.
