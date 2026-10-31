@@ -47,7 +47,7 @@
 -- Right Alt acts as Right Super.
 hl.config({
   input = {
-    kb_options = "altwin:ralt_rwin",
+    kb_options = "altwin:swap_ralt_rwin",
   },
 })
 
