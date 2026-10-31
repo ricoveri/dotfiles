@@ -1,0 +1,11 @@
+# ┌──────────────────────────────────────────────
+# │ essentials
+# │ Core shell environment: browser, editor, PATH
+# └──────────────────────────────────────────────
+
+# My web browser
+BROWSER: google-chrome
+PATH:
+  - $HOME/.local/bin
+  - $PATH
+EDITOR: vim

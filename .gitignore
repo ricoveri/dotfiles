@@ -26,6 +26,11 @@
 !.tmux/conf.d/
 !.tmux/conf.d/**
 
+# --- envy drop-ins (non-sensitive only; secrets live in ~/.dotsync) ---
+!.envy.d/
+!.envy.d/00-essentials.yaml
+!.envy.d/00-macos.yaml
+
 # --- Karabiner-Elements ---
 !.config/
 !.config/karabiner/

@@ -1,0 +1,8 @@
+# ┌──────────────────────────────────────────────
+# │ macos
+# │ macOS-only tweaks (Homebrew paths)
+# └──────────────────────────────────────────────
+
+# Homebrew
+PATH:
+  - /opt/homebrew/opt/libpq/bin
