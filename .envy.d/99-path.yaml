@@ -1,0 +1,7 @@
+# ┌──────────────────────────────────────────────
+# │ path
+# │ Keeps the inherited $PATH last (loads after all other PATH drop-ins)
+# └──────────────────────────────────────────────
+
+PATH:
+  - $PATH

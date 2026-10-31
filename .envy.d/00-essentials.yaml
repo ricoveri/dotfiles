@@ -7,5 +7,4 @@
 BROWSER: google-chrome
 PATH:
   - $HOME/.local/bin
-  - $PATH
 EDITOR: vim

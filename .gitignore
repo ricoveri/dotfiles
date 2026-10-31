@@ -30,6 +30,7 @@
 !.envy.d/
 !.envy.d/00-essentials.yaml
 !.envy.d/00-macos.yaml
+!.envy.d/99-path.yaml
 
 # --- Karabiner-Elements ---
 !.config/
