@@ -35,6 +35,10 @@
 !.config/herdr/
 !.config/herdr/config.toml
 
+# --- foot terminal (config only) ---
+!.config/foot/
+!.config/foot/foot.ini
+
 # --- Hyprland / Omarchy (key bindings only) ---
 !.config/hypr/
 !.config/hypr/bindings.lua
