@@ -99,6 +99,28 @@ else
 fi
 
 #####################
+# herdr agent icon font
+#####################
+# herdr-bar draws agent vendor logos with it; the terminal must be able to
+# find it, so it goes where the platform's font lookup (and herdr-bar) expects
+case "$platform" in
+    macos) font_dir="$HOME/Library/Fonts" ;;
+    linux) font_dir="$HOME/.local/share/fonts" ;;
+esac
+font="$font_dir/HerdrAgentIconsMax-Regular.ttf"
+if [ ! -f "$font" ]; then
+    log "installing Herdr Agent Icons Max font"
+    mkdir -p "$font_dir"
+    curl -fsSL -o "$font" \
+        https://raw.githubusercontent.com/hhdebb/herdr-radar/main/dist/HerdrAgentIconsMax-Regular.ttf
+    if [ "$platform" = linux ]; then
+        fc-cache -f "$font_dir"
+    fi
+else
+    log "herdr icon font already installed"
+fi
+
+#####################
 # rust toolchain
 #####################
 # .zshenv sources ~/.cargo/env unconditionally
@@ -143,5 +165,7 @@ Done. Remaining manual steps:
   - deploy the dotfiles (see README, "Install this repo")
   - set up an SSH key for GitHub
   - import your GPG key (17BF540D60DA2F3E)
+  - macOS/iTerm2: check herdr-bar agent logos render (printf ' \n');
+    if they show as boxes, set the profile's non-ASCII font to Herdr Agent Icons Max
   - log out and back in so the new shell takes effect
 EOF
