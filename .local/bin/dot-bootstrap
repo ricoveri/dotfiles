@@ -41,7 +41,7 @@ install_macos() {
     eval "$(/opt/homebrew/bin/brew shellenv)"
 
     log "installing packages with brew"
-    brew install zsh tmux fzf gnupg pinentry-mac stow git curl
+    brew install zsh tmux fzf gnupg pinentry-mac stow git curl herdr
 }
 
 install_linux() {
@@ -51,7 +51,7 @@ install_linux() {
     log "installing packages with pacman"
     # base-devel: needed to build envy with cargo
     sudo pacman -S --needed --noconfirm \
-        zsh tmux fzf gnupg pinentry stow git curl base-devel
+        zsh tmux fzf gnupg pinentry stow git curl base-devel herdr
 }
 
 case "$platform" in
@@ -85,6 +85,17 @@ fi
 if [ -f "$HOME/.tmux.conf" ]; then
     log "installing tmux plugins"
     "$HOME/.tmux/plugins/tpm/bin/install_plugins" || log "tmux plugin install failed, press prefix + I inside tmux"
+fi
+
+#####################
+# herdr plugins
+#####################
+# Needs the dotfiles deployed (plugins.list, herdr-plugins-sync)
+if [ -x "$HOME/.local/bin/herdr-plugins-sync" ]; then
+    log "installing herdr plugins"
+    "$HOME/.local/bin/herdr-plugins-sync" || log "herdr plugin install failed, re-run herdr-plugins-sync"
+else
+    log "herdr-plugins-sync not deployed yet, run it after deploying the dotfiles"
 fi
 
 #####################

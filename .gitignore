@@ -34,6 +34,7 @@
 # --- herdr (config only; dir also holds sockets, logs, session state) ---
 !.config/herdr/
 !.config/herdr/config.toml
+!.config/herdr/plugins.list
 
 # --- foot terminal (config only) ---
 !.config/foot/
@@ -48,6 +49,7 @@
 !.local/
 !.local/bin/
 !.local/bin/dot-bootstrap
+!.local/bin/herdr-plugins-sync
 
 # --- editor / OS cruft (under allowlisted trees) ---
 *.swp
