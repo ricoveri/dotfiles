@@ -1,0 +1,16 @@
+#####################
+# Settings for mise
+#####################
+
+# Linux only; DOT_PLATFORM is set by 04-platform-variants
+[ "$DOT_PLATFORM" = linux ] || return 0
+
+# Interactive shells get the full hook (per-directory env + tool switching);
+# non-interactive ones (scripts, IDEs, agents) get shims on PATH instead.
+if command -v mise >/dev/null 2>&1; then
+	if [[ -o interactive ]]; then
+		eval "$(mise activate zsh)"
+	else
+		eval "$(mise activate zsh --shims)"
+	fi
+fi
