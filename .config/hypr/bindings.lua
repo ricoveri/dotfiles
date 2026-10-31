@@ -39,6 +39,14 @@ o.bind("SUPER + J", "Swap window down", hl.dsp.window.swap({ direction = "d" }))
 o.bind("SUPER + K", "Swap window up", hl.dsp.window.swap({ direction = "u" }))
 o.bind("SUPER + L", "Swap window to the right", hl.dsp.window.swap({ direction = "r" }))
 
+-- Vim-style: SUPER + ALT + h/j/k/l moves focus left/down/up/right.
+-- Replaces SUPER+ALT+K (was: tmux keybindings menu); that stays reachable from the Omarchy menu.
+hl.unbind("SUPER + ALT + K")
+o.bind("SUPER + ALT + H", "Focus left", hl.dsp.focus({ direction = "l" }))
+o.bind("SUPER + ALT + J", "Focus down", hl.dsp.focus({ direction = "d" }))
+o.bind("SUPER + ALT + K", "Focus up", hl.dsp.focus({ direction = "u" }))
+o.bind("SUPER + ALT + L", "Focus right", hl.dsp.focus({ direction = "r" }))
+
 -- SUPER + U maximizes the window (keeps gaps and bar, unlike SUPER+F fullscreen).
 o.bind("SUPER + U", "Maximize window", hl.dsp.window.fullscreen({ mode = "maximized" }))
 
