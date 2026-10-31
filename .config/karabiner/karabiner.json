@@ -40,6 +40,24 @@
             ]
           },
           {
+            "description": "Window: toggle full screen with option + z",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "z",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [
+                  {
+                    "key_code": "f",
+                    "modifiers": ["left_control", "left_command"]
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "ViArrowKeys: Change Command + h/j/k/l to Arrows",
             "manipulators": [
               {
