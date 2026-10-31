@@ -60,3 +60,10 @@ hl.define_submap("web", "reset", function()
   o.bind("D", "Close window", hl.dsp.window.close())
   hl.bind("escape", hl.dsp.submap("reset"))
 end)
+
+-- Mnemonics: SUPER + Q, release, then a letter. Q is for "quit/session".
+o.bind("SUPER + Q", "Session mnemonics", hl.dsp.submap("session"))
+hl.define_submap("session", "reset", function()
+  o.bind("L", "Lock screen", "omarchy-system-lock")
+  hl.bind("escape", hl.dsp.submap("reset"))
+end)
