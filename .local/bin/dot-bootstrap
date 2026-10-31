@@ -42,6 +42,7 @@ install_macos() {
 
     log "installing packages with brew"
     brew install zsh tmux fzf gnupg pinentry-mac stow git curl herdr
+    brew install --cask ghostty
 }
 
 install_linux() {
@@ -51,7 +52,7 @@ install_linux() {
     log "installing packages with pacman"
     # base-devel: needed to build envy with cargo
     sudo pacman -S --needed --noconfirm \
-        zsh tmux fzf gnupg pinentry stow git curl base-devel herdr
+        zsh tmux fzf gnupg pinentry stow git curl base-devel herdr ghostty
 }
 
 case "$platform" in
@@ -165,7 +166,6 @@ Done. Remaining manual steps:
   - deploy the dotfiles (see README, "Install this repo")
   - set up an SSH key for GitHub
   - import your GPG key (17BF540D60DA2F3E)
-  - macOS/iTerm2: check herdr-bar agent logos render (printf ' \n');
-    if they show as boxes, set the profile's non-ASCII font to Herdr Agent Icons Max
+  - macOS: use Ghostty, not iTerm2, for herdr-bar agent logos (iTerm2 shows "?")
   - log out and back in so the new shell takes effect
 EOF

@@ -1,0 +1,7 @@
+font-size = 14
+
+# No Omarchy theme here; matches herdr's tokyo-night
+theme = TokyoNight
+
+# Let Option act as Alt so alt+ binds reach herdr and tmux
+macos-option-as-alt = true

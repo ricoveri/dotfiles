@@ -46,6 +46,12 @@
 !.config/foot/
 !.config/foot/foot.ini
 
+# --- ghostty terminal (platform link is generated, track only the variants) ---
+!.config/ghostty/
+!.config/ghostty/config
+!.config/ghostty/platform.linux
+!.config/ghostty/platform.macos
+
 # --- Hyprland / Omarchy (key bindings only) ---
 !.config/hypr/
 !.config/hypr/bindings.lua
