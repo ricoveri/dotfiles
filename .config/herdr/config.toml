@@ -94,6 +94,12 @@ type = "plugin_action"
 command = "herdr-newtab-plus.open"
 description = "new tab"
 
+[[keys.command]]
+key = "prefix+\\"
+type = "plugin_action"
+command = "herdr-pr-pane.toggle"
+description = "toggle PR pane"
+
 [ui]
 accent = "blue"
 
