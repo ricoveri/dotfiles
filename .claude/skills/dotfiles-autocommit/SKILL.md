@@ -19,6 +19,7 @@ Run `git rev-parse --show-toplevel`. Continue only if it prints `$HOME` (`/home/
 4. Commit with a signed conventional message (`feat(scope): ...`, `fix(scope): ...`, `chore(scope): ...`), one logical change per commit, ending with the attribution lines from the session's system reminder.
 5. `git push` to `main`. If the push is rejected, `git pull --rebase` and retry once; if that conflicts, stop and tell the user.
 6. If GPG signing fails (agent unavailable), report it. Do not retry with `--no-gpg-sign`.
+7. The repo is public and `.githooks/` (pre-commit, pre-push) runs gitleaks plus a forbidden-path check. If a hook rejects, stop and report the finding to the user. Never use `--no-verify`, and never add allowlist entries to `.gitleaks.toml` without the user agreeing it is a false positive.
 
 Report the short hash and what was pushed in one line.
 
