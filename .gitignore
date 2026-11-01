@@ -46,8 +46,6 @@
 !.claude/
 !.claude/keybindings.json
 !.claude/statusline.sh
-!.claude/hooks/
-!.claude/hooks/herdr-agent-state.sh
 !.claude/commands/
 !.claude/commands/doc.md
 !.claude/commands/git-commit-and-push.md
