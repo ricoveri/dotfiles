@@ -42,10 +42,11 @@
 !.config/herdr/config.toml
 !.config/herdr/plugins.list
 
-# --- Claude Code (portable config only; state, credentials, settings.json stay untracked) ---
+# --- Claude Code (portable config only; state and credentials stay untracked) ---
 !.claude/
 !.claude/keybindings.json
 !.claude/statusline.sh
+!.claude/settings.json
 !.claude/commands/
 !.claude/commands/doc.md
 !.claude/commands/git-commit-and-push.md
