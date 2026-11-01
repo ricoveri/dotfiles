@@ -131,13 +131,7 @@ printf " · ${YELLOW}${COST_FMT}${RESET} · ⏱️  ${MINS}m ${SECS}s"
 
 CAVEMAN_FLAG="$HOME/.claude/.caveman-active"
 if [ -f "$CAVEMAN_FLAG" ]; then
-  MODE=$(cat "$CAVEMAN_FLAG" 2>/dev/null)
-  if [ "$MODE" = "full" ] || [ -z "$MODE" ]; then
-    printf ' \033[38;5;172m[CAVEMAN]\033[0m'
-  else
-    SUFFIX=$(echo "$MODE" | tr '[:lower:]' '[:upper:]')
-    printf ' \033[38;5;172m[CAVEMAN:%s]\033[0m' "$SUFFIX"
-  fi
+  printf ' \033[38;5;172m[🦴]\033[0m'
 fi
 
 # ── Model + effort badge ───────────────────────────────────────────────────────
