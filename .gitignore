@@ -46,7 +46,8 @@
 !.claude/
 !.claude/keybindings.json
 !.claude/statusline.sh
-!.claude/settings.json
+!.claude/settings.json.macos
+!.claude/settings.json.linux
 !.claude/commands/
 !.claude/commands/doc.md
 !.claude/commands/git-commit-and-push.md
