@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 ##################################################################
 # herdr-plugins-sync: install the herdr plugins listed in
-# ~/.config/herdr/plugins.list when they are missing
+# ~/.config/herdr/plugins.list when they are missing, then update
+# installed plugins at most once per HERDR_PLUGINS_UPDATE_HOURS (default 24)
 # Idempotent: safe to re-run; called by dot-bootstrap and zsh init
 ##################################################################
 
@@ -12,6 +13,8 @@ log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 herdr_dir="$HOME/.config/herdr"
 list="$herdr_dir/plugins.list"
 lock="$herdr_dir/.plugins-sync.lock"
+stamp="$herdr_dir/.plugins-update.stamp"
+update_mins=$(( ${HERDR_PLUGINS_UPDATE_HOURS:-24} * 60 ))
 
 command -v herdr > /dev/null 2>&1 || exit 0
 [ -f "$list" ] || exit 0
@@ -36,5 +39,16 @@ while read -r entry; do
     log "installing herdr plugin $entry"
     herdr plugin install "$entry" --yes < /dev/null || { log "failed: $entry"; failed=1; }
 done < "$list"
+
+# Throttled: the stamp is only touched after a successful update, so a
+# failed (e.g. offline) run is retried on the next shell
+if [ ! -e "$stamp" ] || [ -n "$(find "$stamp" -mmin +"$update_mins" 2> /dev/null)" ]; then
+    log "updating herdr plugins"
+    if herdr plugin update --yes < /dev/null; then
+        touch "$stamp"
+    else
+        log "plugin update failed, will retry next run"
+    fi
+fi
 
 exit "$failed"
