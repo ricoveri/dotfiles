@@ -10,6 +10,9 @@
 !README.md
 !AGENTS.md
 !CLAUDE.md
+!.gitleaks.toml
+!.githooks/
+!.githooks/**
 
 # --- zsh (narrow: only profile.d/ and custom/) ---
 !.zshrc

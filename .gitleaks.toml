@@ -1,0 +1,9 @@
+# gitleaks config for the dotfiles repo (used by .githooks/)
+[extend]
+useDefault = true
+
+# GPG key IDs in .gitconfig are public identifiers, not secrets
+[[allowlists]]
+description = "git signingkey (GPG key ID)"
+regexTarget = "line"
+regexes = ['''^\s*signingkey\s*=\s*[0-9A-Fa-f]{16,40}\s*$''']

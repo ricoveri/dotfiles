@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Final gate before anything reaches the public remote: scans every commit
+# being pushed, including ones made with --no-verify.
+# stdin: <local ref> <local sha> <remote ref> <remote sha>
+set -uo pipefail
+
+hooks_dir=$(dirname "$0")
+zero=0000000000000000000000000000000000000000
+
+if ! command -v gitleaks > /dev/null 2>&1; then
+    echo "dotfiles guard: gitleaks not installed (brew/pacman install gitleaks)" >&2
+    exit 1
+fi
+
+status=0
+while read -r _local_ref local_sha _remote_ref remote_sha; do
+    # Branch deletion: nothing to scan
+    [ "$local_sha" = "$zero" ] && continue
+
+    if [ "$remote_sha" = "$zero" ]; then
+        # New remote branch: commits not reachable from any remote ref
+        range="$local_sha --not --remotes"
+    else
+        range="$remote_sha..$local_sha"
+    fi
+
+    # shellcheck disable=SC2086
+    git log --format= --name-only --diff-filter=ACMR $range | sort -u | sed '/^$/d' \
+        | "$hooks_dir/_check-paths" || status=1
+
+    gitleaks git --log-opts="$range" --redact --no-banner --log-level warn \
+        || { echo "dotfiles guard: gitleaks found secrets in commits to push" >&2; status=1; }
+done
+
+exit $status

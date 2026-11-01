@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Reject forbidden paths (see CLAUDE.md "Forbidden paths").
+# Reads repo-relative paths on stdin, one per line.
+# Exits 1 and lists offenders if any match.
+
+forbidden='^\.ssh/|^\.aws/|^\.sensitive/|^\.gnupg/|^\.pypirc$'
+forbidden+='|^\.(histfile|zsh_history|bash_history)$|^\.(cache|npm)/'
+forbidden+='|^\.claude/\.credentials\.json$'
+forbidden+='|(^|/)\.env(\.[^/]*)?$|\.(pem|key|p12|pfx)$|(^|/)id_(rsa|ed25519|ecdsa|dsa)$'
+
+# Sole exception inside .gnupg/: gpg-agent.conf and its platform variants
+allowed='^\.gnupg/gpg-agent\.conf(\.[^/]+)?$'
+
+bad=$(grep -E "$forbidden" | grep -vE "$allowed")
+
+if [ -n "$bad" ]; then
+    echo "dotfiles guard: refusing forbidden path(s):" >&2
+    sed 's/^/  /' <<<"$bad" >&2
+    exit 1
+fi

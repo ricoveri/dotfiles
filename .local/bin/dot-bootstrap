@@ -41,7 +41,7 @@ install_macos() {
     eval "$(/opt/homebrew/bin/brew shellenv)"
 
     log "installing packages with brew"
-    brew install zsh tmux fzf gnupg pinentry-mac stow git curl herdr
+    brew install zsh tmux fzf gnupg pinentry-mac stow git curl herdr gitleaks
     brew install --cask ghostty
 }
 
@@ -52,7 +52,7 @@ install_linux() {
     log "installing packages with pacman"
     # base-devel: needed to build envy with cargo
     sudo pacman -S --needed --noconfirm \
-        zsh tmux fzf gnupg pinentry stow git curl base-devel herdr ghostty
+        zsh tmux fzf gnupg pinentry stow git curl base-devel herdr ghostty gitleaks
 }
 
 case "$platform" in
@@ -143,6 +143,18 @@ if ! command -v envy > /dev/null 2>&1; then
     CARGO_NET_GIT_FETCH_WITH_CLI=true cargo install --git https://github.com/ricoveri/envy
 else
     log "envy already installed"
+fi
+
+#####################
+# secret-scanning git hooks (.githooks/)
+#####################
+# Repo-local setting: the repo is public, hooks run gitleaks before
+# every commit and push. Skipped until the dotfiles are deployed.
+if git -C "$HOME" rev-parse --git-dir > /dev/null 2>&1 && [ -d "$HOME/.githooks" ]; then
+    log "enabling dotfiles git hooks"
+    git -C "$HOME" config core.hooksPath .githooks
+else
+    log "dotfiles not deployed yet, re-run after deploying to enable git hooks"
 fi
 
 #####################

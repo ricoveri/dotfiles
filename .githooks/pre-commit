@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Block commits that add secrets or forbidden paths (public repo).
+# Enabled by: git config core.hooksPath .githooks (dot-bootstrap does this)
+set -uo pipefail
+
+hooks_dir=$(dirname "$0")
+
+if ! command -v gitleaks > /dev/null 2>&1; then
+    echo "dotfiles guard: gitleaks not installed (brew/pacman install gitleaks)" >&2
+    exit 1
+fi
+
+git diff --cached --name-only --diff-filter=ACMR | "$hooks_dir/_check-paths" || exit 1
+
+gitleaks git --pre-commit --staged --redact --no-banner --log-level warn \
+    || { echo "dotfiles guard: gitleaks found secrets in staged changes" >&2; exit 1; }
