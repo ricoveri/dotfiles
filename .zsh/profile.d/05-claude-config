@@ -1,0 +1,58 @@
+#####################
+# Claude Code portable config
+#####################
+
+# ~/.claude is stowed from ~/.dotsync/claude/.claude, a Syncthing folder that
+# holds state, credentials and settings.json. Git cannot track files through
+# that symlink, so the portable, non-sensitive subset is versioned in
+# ~/.config/claude-dotfiles and linked into ~/.claude from here.
+#
+# Layout mirrors ~/.claude:
+#   keybindings.json, statusline.sh, hooks/<file>, commands/<file>  -> file links
+#   skills/<name>/...                                                -> one dir link per skill
+#
+# Real files are never overwritten. Links are kept out of Syncthing via
+# ~/.dotsync/.stignore, otherwise each machine would clobber the other's link.
+
+_claude_src="$HOME/.config/claude-dotfiles"
+
+if [ -d "$_claude_src" ] && [ -d "$HOME/.claude" ]; then
+    DOTPRIVATE_DIR="${DOTPRIVATE_DIR:-$HOME/.dotsync}"
+    _claude_real="$(cd -P "$HOME/.claude" 2>/dev/null && pwd)"
+
+    # Unique link units relative to the source dir
+    typeset -U _claude_units
+    _claude_units=()
+    while IFS= read -r _claude_file; do
+        _claude_rel="${_claude_file#$_claude_src/}"
+        case "$_claude_rel" in
+            skills/*/*) _claude_rel="${_claude_rel%%/*}/${${_claude_rel#*/}%%/*}" ;;
+        esac
+        _claude_units+=("$_claude_rel")
+    done < <(find "$_claude_src" -type f ! -name .DS_Store 2>/dev/null | sort)
+
+    for _claude_unit in $_claude_units; do
+        _claude_link="$HOME/.claude/$_claude_unit"
+        _claude_target="$_claude_src/$_claude_unit"
+
+        # Keep the link out of Syncthing, before it exists
+        case "$_claude_real" in
+            "$DOTPRIVATE_DIR"/*)
+                _claude_ign="/${_claude_real#$DOTPRIVATE_DIR/}/$_claude_unit"
+                grep -qxF "$_claude_ign" "$DOTPRIVATE_DIR/.stignore" 2>/dev/null \
+                    || echo "$_claude_ign" >> "$DOTPRIVATE_DIR/.stignore"
+                ;;
+        esac
+
+        if [ -e "$_claude_link" ] && [ ! -L "$_claude_link" ]; then
+            echo "dot: $_claude_link is a real file; remove it to link the tracked copy" >&2
+            continue
+        fi
+        [ "$(readlink "$_claude_link" 2>/dev/null)" = "$_claude_target" ] && continue
+
+        mkdir -p "${_claude_link%/*}" && ln -sfn "$_claude_target" "$_claude_link"
+    done
+fi
+
+unset _claude_src _claude_real _claude_units _claude_file _claude_rel \
+      _claude_unit _claude_link _claude_target _claude_ign

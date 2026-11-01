@@ -42,6 +42,11 @@
 !.config/herdr/config.toml
 !.config/herdr/plugins.list
 
+# --- Claude Code (portable config only; state + settings.json live in ~/.dotsync) ---
+# Linked into ~/.claude by .zsh/profile.d/05-claude-config
+!.config/claude-dotfiles/
+!.config/claude-dotfiles/**
+
 # --- foot terminal (config only) ---
 !.config/foot/
 !.config/foot/foot.ini
