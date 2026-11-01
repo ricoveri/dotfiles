@@ -24,15 +24,17 @@ failed=0
 while read -r entry; do
     case "$entry" in ''|'#'*) continue ;; esac
 
-    # Installs land in plugins/github-installations/<repo>-<hash>/
+    # Installs land in plugins/github/<repo>-<hash>/ or, depending on the
+    # herdr version, plugins/github-installations/<repo>-<hash>/
     repo="${entry#*/}"
     repo="${repo%%/*}"
-    if compgen -G "$herdr_dir/plugins/github-installations/$repo-*/" > /dev/null; then
+    if compgen -G "$herdr_dir/plugins/github*/$repo-*/" > /dev/null; then
         continue
     fi
 
+    # The flag must follow the positional; stdin is the list being read
     log "installing herdr plugin $entry"
-    herdr plugin install --yes "$entry" || { log "failed: $entry"; failed=1; }
+    herdr plugin install "$entry" --yes < /dev/null || { log "failed: $entry"; failed=1; }
 done < "$list"
 
 exit "$failed"
