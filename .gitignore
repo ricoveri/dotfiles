@@ -42,10 +42,18 @@
 !.config/herdr/config.toml
 !.config/herdr/plugins.list
 
-# --- Claude Code (portable config only; state + settings.json live in ~/.dotsync) ---
-# Linked into ~/.claude by .zsh/profile.d/05-claude-config
-!.config/claude-dotfiles/
-!.config/claude-dotfiles/**
+# --- Claude Code (portable config only; state, credentials, settings.json stay untracked) ---
+!.claude/
+!.claude/keybindings.json
+!.claude/statusline.sh
+!.claude/hooks/
+!.claude/hooks/herdr-agent-state.sh
+!.claude/commands/
+!.claude/commands/doc.md
+!.claude/commands/git-commit-and-push.md
+!.claude/skills/
+!.claude/skills/dotfiles-autocommit/
+!.claude/skills/dotfiles-autocommit/**
 
 # --- foot terminal (config only) ---
 !.config/foot/
