@@ -24,14 +24,16 @@ mkdir "$lock" 2> /dev/null || exit 0
 trap 'rmdir "$lock"' EXIT
 
 failed=0
+# Match on the install source (github:<owner>/<repo>@<sha>): install dirs
+# are named after the plugin id, which need not match the repo name
+installed=$(herdr plugin list 2> /dev/null || true)
 while read -r entry; do
     case "$entry" in ''|'#'*) continue ;; esac
 
-    # Installs land in plugins/github/<repo>-<hash>/ or, depending on the
-    # herdr version, plugins/github-installations/<repo>-<hash>/
+    owner="${entry%%/*}"
     repo="${entry#*/}"
     repo="${repo%%/*}"
-    if compgen -G "$herdr_dir/plugins/github*/$repo-*/" > /dev/null; then
+    if grep -qF "[github:$owner/$repo@" <<< "$installed"; then
         continue
     fi
 
