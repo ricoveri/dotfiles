@@ -37,7 +37,7 @@ copy_mode = "prefix+["
 split_horizontal = ["prefix+s", "alt+enter"]
 split_vertical = ["prefix+v", "alt+shift+enter"]
 close_pane = ["prefix+x", "alt+esc"]
-zoom = "prefix+z"
+zoom = "prefix+u"
 last_pane = "prefix+;"
 
 focus_pane_left = ["prefix+h", "ctrl+alt+left"]
