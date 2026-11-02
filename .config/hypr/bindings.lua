@@ -67,3 +67,6 @@ hl.define_submap("session", "reset", function()
   o.bind("L", "Lock screen", "omarchy-system-lock")
   hl.bind("escape", hl.dsp.submap("reset"))
 end)
+
+-- vanyek: keynav clone (Wayland has no global hotkeys)
+o.bind("CTRL + semicolon", "vanyek", "vanyek start")
