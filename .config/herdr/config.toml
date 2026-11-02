@@ -128,7 +128,7 @@ tab_bar_right = [{ type = "zoom" }, { type = "hostname" }]
 window_title = "{hostname}: {workspace}"
 
 [worktrees]
-# Shared with merlin (STACKS_PATH=~/Projects/workspaces/stack): herdr lays
+# Shared with merlin (STACKS_PATH=~/Projects/worktrees/stack): herdr lays
 # worktrees out as <directory>/<repo>/<branch-slug>, so stack worktrees from
-# either tool land under ~/Projects/workspaces/stack/.
-directory = "~/Projects/workspaces"
+# either tool land under ~/Projects/worktrees/stack/.
+directory = "~/Projects/worktrees"
