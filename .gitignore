@@ -71,6 +71,7 @@
 # --- Hyprland / Omarchy (key bindings only) ---
 !.config/hypr/
 !.config/hypr/bindings.lua
+!.config/hypr/hyprland.lua
 !.config/hypr/input.lua
 
 # --- .local (bootstrap script) ---
