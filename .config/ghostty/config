@@ -40,6 +40,8 @@ keybind = control+shift+c=copy_to_clipboard
 keybind = shift+enter=csi:13;2u
 # Legacy encoding sends Alt+Shift+Enter the same as Alt+Enter; send CSI-u so tmux can match M-S-Enter.
 keybind = alt+shift+enter=csi:13;4u
+# Ghostty 1.4 binds Ctrl+Enter to toggle_fullscreen by default; unbind so it reaches TUIs.
+keybind = control+enter=unbind
 # Kitty keyboard protocol (enabled by TUIs) reports Ctrl+[ as CSI-u; force plain ESC.
 keybind = control+bracket_left=text:\x1b
 keybind = super+control+shift+alt+arrow_down=resize_split:down,100
