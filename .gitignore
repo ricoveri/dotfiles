@@ -45,6 +45,29 @@
 !.config/herdr/config.toml
 !.config/herdr/plugins.list
 
+# --- herdr-app (own layout, keys and mods only; shipped files, .d.ts, state and sockets stay untracked) ---
+!.config/herdr-app/
+!.config/herdr-app/keys.json
+!.config/herdr-app/layouts/
+!.config/herdr-app/layouts/main-pr.json
+!.config/herdr-app/mods/
+!.config/herdr-app/mods/pr/
+!.config/herdr-app/mods/pr/main.js
+!.config/herdr-app/mods/pr/mod.json
+!.config/herdr-app/mods/leader/
+!.config/herdr-app/mods/leader/main.js
+!.config/herdr-app/mods/leader/mod.json
+!.config/herdr-app/mods/palette/
+!.config/herdr-app/mods/palette/main.js
+!.config/herdr-app/mods/palette/mod.json
+!.config/herdr-app/mods/space-select/
+!.config/herdr-app/mods/space-select/main.js
+!.config/herdr-app/mods/space-select/mod.json
+!.config/herdr-app/mods/agent-select/
+!.config/herdr-app/mods/agent-select/main.js
+!.config/herdr-app/mods/agent-select/mod.json
+.config/herdr-app/AGENTS.md
+
 # --- Claude Code (portable config only; state and credentials stay untracked) ---
 !.claude/
 !.claude/keybindings.json
