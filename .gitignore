@@ -66,6 +66,11 @@
 !.config/herdr-app/mods/agent-select/
 !.config/herdr-app/mods/agent-select/main.js
 !.config/herdr-app/mods/agent-select/mod.json
+!.config/herdr-app/mods/worktree-hooks/
+!.config/herdr-app/mods/worktree-hooks/main.js
+!.config/herdr-app/mods/worktree-hooks/mod.json
+!.config/herdr-app/mods/worktree-hooks/hooks.js
+!.config/herdr-app/mods/worktree-hooks/yaml.js
 .config/herdr-app/AGENTS.md
 
 # --- Claude Code (portable config only; state and credentials stay untracked) ---
