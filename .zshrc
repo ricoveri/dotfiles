@@ -86,8 +86,10 @@ fpath=($ZSH_HOME/lib $fpath) && export FPATH
 
 #
 # checks tmux is installed before trying to launch it.
-# NOTE: it won't run if invoked under vscode, neovim, orca, or herdr
-if [[ "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "Orca" && -z "$NVIM" && "$HERDR_ENV" != "1" ]]; then
+# NOTE: it won't run if invoked under vscode, neovim, orca, herdr (TUI), or
+# the Herdr app (its terminals run in herdr-core, which sets HC_TERMINAL_ID;
+# TERM_PROGRAM is "ghostty" there so it can't be used to tell them apart)
+if [[ "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "Orca" && -z "$NVIM" && "$HERDR_ENV" != "1" && -z "$HC_TERMINAL_ID" ]]; then
     if which tmux >/dev/null 2>&1; then
         # Attach to existing deattached session or start a new session
         if [[ -z "$TMUX" ]] ;then
