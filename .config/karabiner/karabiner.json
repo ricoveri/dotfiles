@@ -28,7 +28,8 @@
                       "com\\.microsoft\\.VSCode",
                       "com\\.googlecode\\.iterm2",
                       "com\\.neovide\\.neovide",
-                      "com\\.mitchellh\\.ghostty"
+                      "com\\.mitchellh\\.ghostty",
+                      "dev\\.herdr\\.app"
                     ],
                     "type": "frontmost_application_if"
                   }
