@@ -71,6 +71,22 @@
 !.config/herdr-app/mods/worktree-hooks/mod.json
 !.config/herdr-app/mods/worktree-hooks/hooks.js
 !.config/herdr-app/mods/worktree-hooks/yaml.js
+!.config/herdr-app/mods/menu-hooks/
+!.config/herdr-app/mods/menu-hooks/main.js
+!.config/herdr-app/mods/menu-hooks/mod.json
+!.config/herdr-app/mods/new-menu-hooks/
+!.config/herdr-app/mods/new-menu-hooks/main.js
+!.config/herdr-app/mods/new-menu-hooks/mod.json
+!.config/herdr-app/mods/tabs-hooks/
+!.config/herdr-app/mods/tabs-hooks/main.js
+!.config/herdr-app/mods/tabs-hooks/mod.json
+!.config/herdr-app/mods/tabs-hooks/win-close.svg
+!.config/herdr-app/mods/tabs-hooks/win-max.svg
+!.config/herdr-app/mods/tabs-hooks/win-min.svg
+!.config/herdr-app/mods/tabs-hooks/win-restore.svg
+!.config/herdr-app/mods/spaces-hooks/
+!.config/herdr-app/mods/spaces-hooks/main.js
+!.config/herdr-app/mods/spaces-hooks/mod.json
 .config/herdr-app/AGENTS.md
 
 # --- Claude Code (portable config only; state and credentials stay untracked) ---
