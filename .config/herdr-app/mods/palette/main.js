@@ -4,10 +4,15 @@
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input } from "gpui-base";
-import { commands, keys, run, theme, props, closeOverlay } from "herdr";
+import { commands, keys, run, theme, props, closeOverlay, openOverlay, spaces, panes } from "herdr";
 
 const ROW = 34, VISIBLE = 10;
 const HIDE = new Set(["app.palette", "overlay.close"]);
+// Not app commands: they open the shipped worktree dialog, as the + menu does.
+const EXTRA = [
+  { name: "worktree.new", about: "New git worktree for the current repo (opens the worktree dialog).", args: [], dialog: { action: "new", width: 460, height: 280 } },
+  { name: "worktree.open", about: "Open an existing worktree of the current repo.", args: [], dialog: { action: "open", width: 560, height: 480 } },
+];
 const SYM = { cmd: "⌘", ctrl: "⌃", alt: "⌥", shift: "⇧" };
 const pretty = (k) => k.split("-").map((p) => SYM[p] ?? (p.length === 1 ? p.toUpperCase() : p)).join("");
 
@@ -47,7 +52,7 @@ export default class Palette extends View {
       const name = k.action.split(":")[0];
       if (typeof k.action === "string" && !bound.has(name) && k.section === "global" && (k.action === name || k.action.startsWith(name + ":"))) bound.set(name, k.keys);
     }
-    return commands()
+    return [...commands(), ...EXTRA]
       .filter((c) => !HIDE.has(c.name))
       .map((c) => ({ ...c, key: bound.get(c.name), needs: c.args.some((a) => a.required), s: score(c, this.filter) }))
       .filter((c) => c.s !== null)
@@ -57,7 +62,11 @@ export default class Palette extends View {
   go(c) {
     if (!c) return;
     closeOverlay(props().overlay);
-    run(c.name, {});
+    if (c.dialog) {
+      const space = spaces().find((x) => x.active);
+      const { width, height, action } = c.dialog;
+      openOverlay({ mod: "worktree-hooks", kind: "dialog", width, height, props: { space: space?.id, folder: panes().find((p) => p.focused)?.cwd, action } });
+    } else run(c.name, {});
   }
 
   move(d, n) {
