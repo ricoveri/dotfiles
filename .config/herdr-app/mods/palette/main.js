@@ -1,10 +1,11 @@
 // Command palette. Lists every app command (`commands()`), filtered as you type.
 // ↑/↓ or ctrl+n / ctrl+p move, Enter runs, Esc closes. Opened by <leader><space> (mods/leader).
 // A command that needs arguments is run bare: Herdr asks for them, as it does for a key.
+// Exception: app.theme isn't asked for, so it is expanded to one entry per theme.
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input } from "gpui-base";
-import { commands, keys, run, theme, props, closeOverlay, openOverlay, spaces, panes } from "herdr";
+import { commands, themes, keys, run, theme, props, closeOverlay, openOverlay, spaces, panes } from "herdr";
 
 const ROW = 34, VISIBLE = 10;
 const HIDE = new Set(["app.palette", "overlay.close"]);
@@ -52,7 +53,10 @@ export default class Palette extends View {
       const name = k.action.split(":")[0];
       if (typeof k.action === "string" && !bound.has(name) && k.section === "global" && (k.action === name || k.action.startsWith(name + ":"))) bound.set(name, k.keys);
     }
-    return [...commands(), ...EXTRA]
+    // app.theme needs a name and Herdr doesn't ask for it, so list one entry per theme.
+    const themed = (c) => c.name !== "app.theme" ? [c]
+      : themes().map((t) => ({ ...c, name: `app.theme ${t.name}`, about: `Switch to the ${t.name} theme.`, args: [], run: "app.theme", runArgs: { name: t.name } }));
+    return [...commands(), ...EXTRA].flatMap(themed)
       .filter((c) => !HIDE.has(c.name))
       .map((c) => ({ ...c, key: bound.get(c.name), needs: c.args.some((a) => a.required), s: score(c, this.filter) }))
       .filter((c) => c.s !== null)
@@ -66,7 +70,7 @@ export default class Palette extends View {
       const space = spaces().find((x) => x.active);
       const { width, height, action } = c.dialog;
       openOverlay({ mod: "worktree-hooks", kind: "dialog", width, height, props: { space: space?.id, folder: panes().find((p) => p.focused)?.cwd, action } });
-    } else run(c.name, {});
+    } else run(c.run ?? c.name, c.runArgs ?? {});
   }
 
   move(d, n) {
