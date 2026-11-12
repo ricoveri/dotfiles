@@ -2,6 +2,7 @@
   "id": "root",
   "theme": "cyberpunk",
   "font": "Terminess Nerd Font Mono",
+  "ui_font": "Terminess Nerd Font Mono",
   "font_size": 16,
   "type": "row",
   "titlebar": "none",
