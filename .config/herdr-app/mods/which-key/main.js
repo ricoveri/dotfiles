@@ -6,6 +6,7 @@ import { v_flex, h_flex } from "gpui-base";
 import { run, props, closeOverlay, theme } from "herdr";
 
 const norm = (k) => (k === " " ? "space" : k === "\\" ? "backslash" : k === "-" ? "minus" : k);
+const DELAY_MS = 250; // how long before the strip appears
 const SHOW = { backslash: "\\", minus: "-" }; // how a key is drawn in the popup
 
 export default class WhichKey extends View {
@@ -13,6 +14,10 @@ export default class WhichKey extends View {
     this.path = []; // keys of the groups we're inside
     this.handle = cx.focus_handle();
     this.handle.focus();
+    // Keys work from the first frame; the strip itself only draws after a beat, so a fast
+    // sequence (<leader> h) never flashes it.
+    this.shown = false;
+    cx.timer.after(DELAY_MS, (cx) => { this.shown = true; cx.notify(); });
   }
 
   level() {
@@ -24,7 +29,7 @@ export default class WhichKey extends View {
   render(cx) {
     const t = theme(), level = this.level(), title = props()?.title ?? "Keys";
     // Spacemacs-style which-key: a full-width strip along the bottom edge, entries flowing in columns.
-    return v_flex().id("which-key").track_focus(this.handle).size_full().min_h(0).px(18).py(12).gap(8).bg(t.popover).border_t(1).border_color(t.border).text_size(13)
+    const root = v_flex().id("which-key").track_focus(this.handle).size_full().min_h(0)
       .on_key_down((e, cx) => {
         const k = norm(e.key);
         if (["control", "shift", "alt", "meta", "cmd"].includes(k)) return; // bare modifiers: keep waiting
@@ -34,7 +39,9 @@ export default class WhichKey extends View {
         if (b?.group) { this.path.push(k); cx.notify(); return; }
         closeOverlay(props()?.overlay);
         if (b) run(b.command, b.args ?? {});
-      })
+      });
+    if (!this.shown) return root; // frame is "none": nothing drawn yet
+    return root.px(18).py(12).gap(8).bg(t.popover).border_t(1).border_color(t.border).text_size(13)
       .child(h_flex().items_center().gap(8)
         .child(div().font_semibold().text_color(t.foreground).child([title, ...this.path.map((k) => SHOW[k] ?? k)].join(" ")))
         .child(div().flex_1())
