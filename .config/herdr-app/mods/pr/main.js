@@ -15,6 +15,7 @@ const QUERY = `query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r)
  author{login}
  reviewRequests(first:20){nodes{requestedReviewer{__typename ... on User{login} ... on Team{name}}}}
  latestReviews(first:20){nodes{state author{login} submittedAt}}
+ latestOpinionatedReviews(first:20){nodes{state author{login} submittedAt}}
  commits(last:1){nodes{commit{statusCheckRollup{state contexts(first:50){nodes{__typename ... on CheckRun{name status conclusion detailsUrl} ... on StatusContext{context state targetUrl}}}}}}}
  comments(first:30){nodes{author{login} body url createdAt}}
  reviewThreads(first:60){nodes{isResolved isOutdated path line comments(first:30){nodes{author{login} body url createdAt}}}}
@@ -100,7 +101,11 @@ export default class PrPanel extends View {
     const mark = { ok: ["✓", t.ansi2], fail: ["✗", t.ansi1], pending: ["●", t.blocked] };
 
     // Reviewers
-    const reviewed = new Map(pr.latestReviews.nodes.map((r) => [r.author?.login, r]));
+    // latestReviews = newest review per author, even a bare COMMENTED one that
+    // masks an earlier APPROVED. Opinionated reviews (approve/changes) win; plain
+    // commenters are appended after.
+    const reviewed = new Map(pr.latestOpinionatedReviews.nodes.map((r) => [r.author?.login, r]));
+    for (const r of pr.latestReviews.nodes) if (!reviewed.has(r.author?.login)) reviewed.set(r.author?.login, r);
     const requested = pr.reviewRequests.nodes.map((n) => n.requestedReviewer?.login || n.requestedReviewer?.name).filter(Boolean).filter((n) => !reviewed.has(n));
     const rv = { APPROVED: ["✓ approved", t.ansi2], CHANGES_REQUESTED: ["✗ changes", t.ansi1], COMMENTED: ["● commented", t.muted], DISMISSED: ["dismissed", t.dim], PENDING: ["pending", t.dim] };
 
