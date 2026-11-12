@@ -23,12 +23,14 @@ const BINDINGS = {
 
 export default class Leader extends View {
   init(_props, _cx) {
+    // Close the launcher first: closing it after which-key is up can hand keyboard focus
+    // back to the pane underneath and leave which-key without the keys.
+    const self = props()?.overlay;
+    if (self) closeOverlay(self);
     openOverlay({
       mod: "which-key", props: { title: "Leader", bindings: BINDINGS },
       kind: "popup", at: "top", offset: 5000, width: 1, height: 150, frame: "none",
     });
-    const self = props()?.overlay;
-    if (self) closeOverlay(self);
   }
 
   render(_cx) {
