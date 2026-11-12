@@ -57,6 +57,9 @@
 !.config/herdr-app/mods/leader/
 !.config/herdr-app/mods/leader/main.js
 !.config/herdr-app/mods/leader/mod.json
+!.config/herdr-app/mods/which-key/
+!.config/herdr-app/mods/which-key/main.js
+!.config/herdr-app/mods/which-key/mod.json
 !.config/herdr-app/mods/palette/
 !.config/herdr-app/mods/palette/main.js
 !.config/herdr-app/mods/palette/mod.json
