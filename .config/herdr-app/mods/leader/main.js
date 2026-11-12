@@ -10,7 +10,7 @@ import { run, props, closeOverlay, theme } from "herdr";
 const BINDINGS = {
   space: { label: "Command palette", command: "mod.open", args: { name: "palette" } },
   s: { label: "+space", group: {
-    s: { label: "Switch space", command: "mod.open", args: { name: "space-select" } },
+    s: { label: "Switch space or agent", command: "mod.open", args: { name: "switch-palette" } },
   } },
   ";": { label: "Switch agent", command: "mod.open", args: { name: "agent-select" } },
   b: { label: "Split horizontally (new pane below)", command: "pane.split", args: { direction: "down" } },
