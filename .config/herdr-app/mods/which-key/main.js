@@ -31,7 +31,8 @@ export default class WhichKey extends View {
     // Spacemacs-style which-key: a full-width strip along the bottom edge, entries flowing in columns.
     const root = v_flex().id("which-key").track_focus(this.handle).size_full().min_h(0)
       .on_key_down((e, cx) => {
-        const k = norm(e.key);
+        let k = norm(e.key);
+        if (e.modifiers?.shift && /^[a-z]$/.test(k)) k = k.toUpperCase(); // shift+j -> "J"
         if (["control", "shift", "alt", "meta", "cmd"].includes(k)) return; // bare modifiers: keep waiting
         cx.stop_propagation();
         if (k === "backspace" && this.path.length) { this.path.pop(); cx.notify(); return; }

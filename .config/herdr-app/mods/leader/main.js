@@ -20,6 +20,7 @@ const BINDINGS = () => ({
   b: { label: "Sidebar: mini / full", command: "layout.resize", args: { id: "sidebar", px: sidebarPx() > 160 ? MINI_PX : FULL_PX } },
   minus: { label: "Split horizontally (new pane below)", command: "pane.split", args: { direction: "down" } },
   v: { label: "Split vertically (new pane right)", command: "pane.split", args: { direction: "right" } },
+  J: { label: "Toggle PR panel", command: "layout.toggle", args: { id: "pr-panel" } },
   h: { label: "Focus left split", command: "pane.go", args: { direction: "left" } },
   l: { label: "Focus right split", command: "pane.go", args: { direction: "right" } },
   j: { label: "Focus lower split", command: "pane.go", args: { direction: "down" } },
