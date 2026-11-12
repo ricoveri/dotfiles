@@ -99,6 +99,9 @@
 !.config/herdr-app/mods/spaces-hooks/
 !.config/herdr-app/mods/spaces-hooks/main.js
 !.config/herdr-app/mods/spaces-hooks/mod.json
+!.config/herdr-app/mods/term-copy/
+!.config/herdr-app/mods/term-copy/main.js
+!.config/herdr-app/mods/term-copy/mod.json
 .config/herdr-app/AGENTS.md
 
 # --- Claude Code (portable config only; state and credentials stay untracked) ---
