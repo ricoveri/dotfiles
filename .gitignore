@@ -50,6 +50,8 @@
 !.config/herdr-app/keys.json
 !.config/herdr-app/layouts/
 !.config/herdr-app/layouts/main-pr.json
+!.config/herdr-app/themes/
+!.config/herdr-app/themes/cyberpunk.json
 !.config/herdr-app/mods/
 !.config/herdr-app/mods/pr/
 !.config/herdr-app/mods/pr/main.js
