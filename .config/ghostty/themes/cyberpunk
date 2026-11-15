@@ -1,0 +1,23 @@
+# Cyberpunk: cyan / pink / violet on Oxford blue. Mirrors ~/.config/herdr-app/themes/cyberpunk.json
+palette = 0=#070f34
+palette = 1=#f715ab
+palette = 2=#34edf3
+palette = 3=#f5d547
+palette = 4=#3a5bff
+palette = 5=#b13cf0
+palette = 6=#34edf3
+palette = 7=#c9d3ff
+palette = 8=#3b4a8a
+palette = 9=#ff5cc8
+palette = 10=#7ff6fa
+palette = 11=#ffe97a
+palette = 12=#6f86ff
+palette = 13=#cf6bff
+palette = 14=#a6faff
+palette = 15=#ffffff
+background = #070f34
+foreground = #d6f9fb
+cursor-color = #34edf3
+cursor-text = #070f34
+selection-background = #0313a6
+selection-foreground = #d6f9fb

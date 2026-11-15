@@ -8,7 +8,7 @@ config-file = ?"~/.local/state/omarchy/current/theme/ghostty.conf"
 config-file = ?platform
 
 # Font
-font-family = "JetBrainsMono Nerd Font"
+font-family = "Terminess Nerd Font Mono"
 font-style = Regular
 # Agent vendor logos for herdr-bar
 font-codepoint-map = U+E1A0-U+E1B7=Herdr Agent Icons Max
