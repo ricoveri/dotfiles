@@ -1,7 +1,9 @@
-// Switch space or agent. Fuzzy filter; "@query" shows only agents, "!query" only spaces.
+// Switch space or agent. Fuzzy filter; "@query" shows only agents, "!query" only agents that need
+// you (blocked), "#query" only finished
+// agents (done), "$query" only spaces.
 // Spaces filter by name, folder, branch or machine; agents by program, title, space, tab or status.
 // ↑/↓ or ctrl+n / ctrl+p move, Enter switches (agents jump to their pane), Esc closes.
-// Opened by <leader>ss (mods/leader).
+// Opened by <leader>; (mods/leader).
 
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input } from "gpui-base";
@@ -33,7 +35,7 @@ function score(s, q) {
 export default class SpaceSelect extends View {
   init(_props, cx) {
     this.at = 0; this.top = 0; this.filter = "";
-    this.input = InputState.new({ placeholder: "Switch to a space or agent…  (@ agents · ! spaces)" });
+    this.input = InputState.new({ placeholder: "Switch to a space or agent…  (@ agents · ! needs you · # finished · $ spaces)" });
     this.input.on("change", (_e, cx) => { this.filter = this.input.value(); this.at = 0; this.top = 0; cx.notify(); });
     this.input.on("submit", (_e, cx) => this.go(this.items()[this.at]));
     this.input.focus();
@@ -48,14 +50,16 @@ export default class SpaceSelect extends View {
   parse() {
     const f = this.filter.trimStart(), c = f[0];
     if (c === "@") return { kind: "agent", q: f.slice(1) };
-    if (c === "!") return { kind: "space", q: f.slice(1) };
+    if (c === "!") return { kind: "blocked", q: f.slice(1) };
+    if (c === "#") return { kind: "done", q: f.slice(1) };
+    if (c === "$") return { kind: "space", q: f.slice(1) };
     return { kind: "all", q: f };
   }
 
   items() {
     const { kind, q } = this.parse();
     const out = [];
-    if (kind !== "agent") {
+    if (kind === "all" || kind === "space") {
       for (const x of spaces()) {
         const name = x.name;
         const hay = `${name} ${x.folder ?? ""} ${x.branch ?? ""} ${x.machine ?? ""}`.toLowerCase();
@@ -64,6 +68,8 @@ export default class SpaceSelect extends View {
     }
     if (kind !== "space") {
       for (const a of agents()) {
+        if (kind === "blocked" && a.status !== "blocked") continue;
+        if (kind === "done" && a.status !== "done") continue;
         const name = a.program?.name ?? a.app ?? "agent";
         const hay = `${name} ${a.title ?? ""} ${a.space_name} ${a.tab_name} ${WORD[a.status] ?? a.status}`.toLowerCase();
         out.push({ ...a, kind: "agent", name, hay, rank: 1, ord: -a.seq });
@@ -129,8 +135,8 @@ export default class SpaceSelect extends View {
         else return;
         cx.stop_propagation(); cx.notify();
       })
-      .child(h_flex().items_center().child(div().flex_1().text_size(15).font_semibold().text_color(t.foreground).child(this.parse().kind === "agent" ? "Agents" : this.parse().kind === "space" ? "Spaces" : "Spaces & agents"))
-        .child(div().text_size(11).text_color(t.dim).child(`${n} · @ agents · ! spaces · ⌃n ⌃p · Esc`)))
+      .child(h_flex().items_center().child(div().flex_1().text_size(15).font_semibold().text_color(t.foreground).child(({ agent: "Agents", blocked: "Agents needing you", done: "Finished agents", space: "Spaces" })[this.parse().kind] ?? "Spaces & agents"))
+        .child(div().text_size(11).text_color(t.dim).child(`${n} · @ agents · ! needs you · # finished · $ spaces · ⌃n ⌃p · Esc`)))
       .child(h_flex().h(36).flex_none().px(10).gap(8).items_center().rounded(9).border_1().border_color(t.accent).bg(t.background)
         .child(svg("mods/workspace-chrome/search.svg").size(15).text_color(t.dim))
         .child(Input.new(this.input).flex_1().h_full().text_size(12.8).text_color(t.foreground)))

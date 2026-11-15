@@ -75,9 +75,6 @@
 !.config/herdr-app/mods/switch-palette/
 !.config/herdr-app/mods/switch-palette/main.js
 !.config/herdr-app/mods/switch-palette/mod.json
-!.config/herdr-app/mods/agent-select/
-!.config/herdr-app/mods/agent-select/main.js
-!.config/herdr-app/mods/agent-select/mod.json
 !.config/herdr-app/mods/worktree-hooks/
 !.config/herdr-app/mods/worktree-hooks/main.js
 !.config/herdr-app/mods/worktree-hooks/mod.json
@@ -126,6 +123,8 @@
 !.config/ghostty/config
 !.config/ghostty/platform.linux
 !.config/ghostty/platform.macos
+!.config/ghostty/themes/
+!.config/ghostty/themes/cyberpunk
 
 # --- Hyprland / Omarchy (key bindings only) ---
 !.config/hypr/
