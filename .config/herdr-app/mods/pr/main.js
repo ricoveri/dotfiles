@@ -128,36 +128,46 @@ export default class PrPanel extends View {
     };
     const comments = pr.comments.nodes.slice().reverse();
 
-    const body = v_flex().w_full().px(14).pb(14)
-      // title + status
-      .child(v_flex().w_full().gap(6).py(12).border_b(1).border_color(t.border)
+    // title + status
+    const bTitle = v_flex().w_full().gap(6).py(12).border_b(1).border_color(t.border)
         .child(div().id("pr-title").font_semibold().text_size(13).cursor_pointer().on_click(() => this.openUrl(pr.url)).child(`#${pr.number} ${pr.title}`))
         .child(h_flex().gap(6).flex_wrap().child(this.pill(stateText, stateColor, t)).child(this.pill(decision[0], decision[1], t)).child(this.pill(merge[0], merge[1], t)))
         .child(div().text_color(t.dim).text_size(11).truncate().child(`${pr.author?.login} · ${pr.headRefName} → ${pr.baseRefName}`))
-        .child(h_flex().gap(8).text_size(11).child(div().text_color(t.ansi2).child(`+${pr.additions}`)).child(div().text_color(t.ansi1).child(`−${pr.deletions}`)).child(div().text_color(t.dim).child(`${pr.changedFiles} files`))))
-      // checks
-      .child(this.section("Checks", checks.length ? `${nFail ? nFail + " failing · " : ""}${nPend ? nPend + " running · " : ""}${checks.length - nFail - nPend} passing` : null,
+        .child(h_flex().gap(8).text_size(11).child(div().text_color(t.ansi2).child(`+${pr.additions}`)).child(div().text_color(t.ansi1).child(`−${pr.deletions}`)).child(div().text_color(t.dim).child(`${pr.changedFiles} files`)));
+    // checks
+    const bChecks = this.section("Checks", checks.length ? `${nFail ? nFail + " failing · " : ""}${nPend ? nPend + " running · " : ""}${checks.length - nFail - nPend} passing` : null,
         v_flex().gap(2).children(checks.length ? checks.slice(0, this.open.allChecks ? 50 : 8).map((c, i) => h_flex().id(`chk${i}`).gap(6).h(20).items_center().cursor_pointer().hover((s) => s.bg(t.hover)).on_click(() => this.openUrl(c.url))
           .child(div().w(12).text_color(mark[c.s][1]).child(mark[c.s][0])).child(div().flex_1().min_w(0).truncate().child(c.name)))
           .concat(checks.length > 8 ? [div().id("chk-more").text_size(11).text_color(t.accent).cursor_pointer().on_click((_e, cx) => { this.open.allChecks = !this.open.allChecks; cx.notify(); }).child(this.open.allChecks ? "Show less" : `Show all ${checks.length}`)] : [])
-          : [div().text_color(t.dim).child("No checks")]), t))
-      // reviewers
-      .child(this.section("Reviewers", null, v_flex().gap(3).children([
+          : [div().text_color(t.dim).child("No checks")]), t);
+    // reviewers
+    const bReviewers = this.section("Reviewers", null, v_flex().gap(3).children([
         ...[...reviewed.values()].map((r) => h_flex().gap(8).child(div().flex_1().truncate().child(r.author?.login || "?")).child(div().text_size(11).text_color((rv[r.state] || rv.PENDING)[1]).child((rv[r.state] || [r.state])[0]))),
         ...requested.map((n) => h_flex().gap(8).child(div().flex_1().truncate().child(n)).child(div().text_size(11).text_color(t.blocked).child("requested"))),
         ...(!reviewed.size && !requested.length ? [div().text_color(t.dim).child("No reviewers")] : []),
-      ]), t))
-      // threads
-      .child(this.section("Threads", `${unresolved.length} open · ${threads.length - unresolved.length} resolved`,
-        v_flex().gap(6).children(threads.length ? [...unresolved, ...threads.filter((x) => x.isResolved)].map((th, i) => threadRow(th, i)) : [div().text_color(t.dim).child("No review threads")]), t))
-      // comments
-      .child(this.section("Comments", comments.length,
+      ]), t);
+    // threads
+    const bThreads = this.section("Threads", `${unresolved.length} open · ${threads.length - unresolved.length} resolved`,
+        v_flex().gap(6).children(threads.length ? [...unresolved, ...threads.filter((x) => x.isResolved)].map((th, i) => threadRow(th, i)) : [div().text_color(t.dim).child("No review threads")]), t);
+    // comments
+    const bComments = this.section("Comments", comments.length,
         v_flex().gap(8).children(comments.length ? comments.slice(0, 10).map((c) => v_flex().id(`cm-${c.url}`).gap(1).cursor_pointer().on_click(() => this.openUrl(c.url))
           .child(h_flex().gap(6).child(div().font_semibold().text_size(11).child(c.author?.login || "ghost")).child(div().text_size(10).text_color(t.dim).child(ago(c.createdAt))))
-          .child(div().text_color(t.muted).child(clean(c.body)))) : [div().text_color(t.dim).child("No comments")]), t));
+          .child(div().text_color(t.muted).child(clean(c.body)))) : [div().text_color(t.dim).child("No comments")]), t);
 
-    return root.child(div().flex_1().min_h(0).relative()
-      .child(v_flex().id("pr-scroll").absolute().inset_0().overflow_y_scroll().child(body))
-      .child(Scrollbar.vertical("pr-scroll").absolute().inset_0()));
+    // Wide, short bottom panel: lay sections out as side-by-side columns, each scrolling on its own.
+    const col = (id, kids, cls) => {
+      const c = div().relative().min_w(0).h_full().border_r(1).border_color(t.border);
+      return (cls ? cls(c) : c.flex_1().min_w(200))
+        .child(v_flex().id(id).absolute().inset_0().overflow_y_scroll().px(14).pb(10).children(kids))
+        .child(Scrollbar.vertical(id).absolute().inset_0());
+    };
+    const columns = h_flex().flex_1().min_h(0).w_full()
+      .child(col("pr-c1", [bTitle, bReviewers], (c) => c.w(320).flex_none()))
+      .child(col("pr-c2", [bChecks]))
+      .child(col("pr-c3", [bThreads], (c) => c.flex_1().min_w(240)))
+      .child(col("pr-c4", [bComments]));
+
+    return root.child(columns);
   }
 }
