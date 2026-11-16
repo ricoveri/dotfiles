@@ -1,4 +1,8 @@
 ########################################
 # Essential stuff needed before anything
 ########################################
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Keep the PATH a parent process passed in (e.g. moon or proto putting a pinned
+# node/npm first), then add the system directories. `typeset -U` drops the
+# duplicates that nested shells would otherwise accumulate.
+typeset -U PATH
+export PATH="${PATH:+$PATH:}/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
