@@ -79,6 +79,7 @@
 !.config/herdr-app/mods/worktree-hooks/main.js
 !.config/herdr-app/mods/worktree-hooks/mod.json
 !.config/herdr-app/mods/worktree-hooks/hooks.js
+!.config/herdr-app/mods/worktree-hooks/jira.js
 !.config/herdr-app/mods/worktree-hooks/yaml.js
 !.config/herdr-app/mods/menu-hooks/
 !.config/herdr-app/mods/menu-hooks/main.js

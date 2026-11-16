@@ -5,6 +5,7 @@ import { View, div } from "gpui-kit";
 import { v_flex, h_flex, InputState, Input, Scrollbar } from "gpui-base";
 import { run, props, closeOverlay, theme, spaces, panes, exec, home, notify } from "herdr";
 import { hooksFor, hookEnv, hookArgv } from "./hooks.js";
+import { getCreds, saveCreds, defaultEmail, searchIssues, siteUrl, verifyCreds, fetchPool, rank } from "./jira.js";
 
 // Where a space is now: its first terminal's live folder, else where it was made.
 function place(s, all = panes()) {
@@ -113,8 +114,8 @@ export default class Worktree extends View {
     this.text = props()?.branch ?? "";
     this.list = undefined; // open: the checkouts, once read
     this.at = 0;
-    this.input = InputState.new({ value: this.text, placeholder: this.opening ? "filter worktrees" : "branch name" });
-    this.input.on("change", (_e, cx) => { this.text = this.input.value(); this.error = ""; this.at = 0; cx.notify(); });
+    this.input = InputState.new({ value: this.text, placeholder: this.opening ? "filter worktrees" : "branch name, or search tickets…" });
+    this.input.on("change", (_e, cx) => { this.text = this.input.value(); this.error = ""; this.at = 0; this.tat = -1; this.queue(cx); cx.notify(); });
     this.input.on("submit", (_e, cx) => this.go(cx));
     this.inputFocused = true;
     this.input.on("focus", (_e, cx) => { this.inputFocused = true; cx.notify(); });
@@ -127,6 +128,32 @@ export default class Worktree extends View {
     this.repo = undefined; // undefined: looking, null: not in git
     this.dirty = false;
     this.unpushed = [];
+    // Jira ticket picker (new worktree only). Site, project and token live in the Keychain, never in this file.
+    this.jira = !this.opening && props()?.action !== "remove" && !props()?.branch;
+    this.tickets = []; // what the list shows: ranked pool hits, then Jira's
+    this.pool = []; // the project's open tickets, fetched once
+    this.poolReady = false;
+    this.remote = []; // Jira's own hits, for tickets outside the pool
+    this.searching = false;
+    this.tat = -1; // selected ticket; -1 = none, Enter uses the typed branch
+    this.seq = 0; // drops stale search responses
+    this.creds = undefined; // undefined: reading, null: not connected
+    this.form = false;
+    this.jiraMsg = "";
+    if (this.jira) {
+      const field = (placeholder, masked) => {
+        const s = InputState.new({ placeholder });
+        if (masked) s.set_masked(true);
+        return s;
+      };
+      this.fields = [field("Jira site (e.g. acme or acme.atlassian.net)"), field("Project key (e.g. ABC)"), field("Atlassian email"), field("API token", true)];
+      this.fields.forEach((f, i) => f.on("submit", (_e, cx) => (i === this.fields.length - 1 ? this.saveJira(cx) : this.fields[i + 1].focus())));
+      cx.spawn(async (cx) => {
+        this.creds = await getCreds();
+        if (this.creds) await this.loadPool(cx);
+        else cx.notify();
+      });
+    }
     cx.spawn(async (cx) => {
       try {
         if (this.on) {
@@ -182,8 +209,101 @@ export default class Worktree extends View {
     cx.notify();
   }
 
+  jiraError(e) {
+    return e.message === "auth" ? "Jira auth failed · ctrl+j to fix" : `Jira unavailable (${e.message})`;
+  }
+
+  // Shown list: local fuzzy matches first, then Jira's own hits for tickets outside the pool.
+  // The selection follows its ticket when results arrive late.
+  refresh() {
+    const sel = this.tickets[this.tat]?.key;
+    const local = rank(this.pool, this.text);
+    const seen = new Set(local.map((t) => t.key));
+    this.tickets = [...local, ...rank(this.remote, this.text).filter((t) => !seen.has(t.key))].slice(0, 40);
+    this.tat = sel ? this.tickets.findIndex((t) => t.key === sel) : -1;
+  }
+
+  async loadPool(cx) {
+    this.pool = [];
+    this.remote = [];
+    this.poolReady = false;
+    try { this.pool = await fetchPool(this.creds); this.jiraMsg = ""; }
+    catch (e) { this.jiraMsg = this.jiraError(e); }
+    this.poolReady = true;
+    this.refresh();
+    cx.notify();
+  }
+
+  // Each keystroke re-ranks the pool at once; Jira is asked (debounced) only when it has few hits.
+  queue(cx) {
+    if (!this.jira || !this.creds || this.form) return;
+    const n = ++this.seq;
+    this.refresh();
+    if (!this.text.trim() || rank(this.pool, this.text).length >= 5) { this.searching = false; return; }
+    this.searching = true;
+    cx.timer.after(350, () => { if (n === this.seq) cx.spawn(async (c) => this.search(c, n)); });
+  }
+
+  async search(cx, n) {
+    try {
+      const rows = await searchIssues(this.text, this.creds);
+      if (n !== this.seq) return;
+      this.remote = rows;
+      this.jiraMsg = "";
+    } catch (e) {
+      if (n !== this.seq) return;
+      this.jiraMsg = this.jiraError(e);
+    }
+    this.searching = false;
+    this.refresh();
+    cx.notify();
+  }
+
+  openForm(cx) {
+    this.form = true;
+    this.jiraMsg = "";
+    cx.notify();
+    cx.spawn(async (cx) => {
+      const c = this.creds;
+      const values = [c?.site ?? "", c?.project ?? "", c?.email || (await defaultEmail()), ""];
+      this.fields.forEach((f, i) => f.set_value(values[i]));
+      cx.notify();
+      cx.timer.after(100, () => this.fields[values.findIndex((v) => !v)]?.focus() ?? this.fields[0].focus());
+    });
+  }
+
+  saveJira(cx) {
+    const [site, project, email, token] = this.fields.map((f) => f.value().trim());
+    if (!siteUrl(site) || !project || !email || !token) { this.jiraMsg = "Fill in all four fields."; return cx.notify(); }
+    if (this.verifying) return;
+    this.verifying = true;
+    this.jiraMsg = "";
+    cx.notify();
+    cx.spawn(async (cx) => {
+      const creds = { site, project: project.toUpperCase(), email, token };
+      let who;
+      try {
+        who = await verifyCreds(creds); // nothing is stored unless Jira accepts it
+        await saveCreds(creds);
+      } catch (e) {
+        this.verifying = false;
+        this.jiraMsg = e instanceof Error ? e.message : String(e);
+        cx.notify();
+        return;
+      }
+      this.verifying = false;
+      this.creds = creds;
+      this.form = false;
+      this.jiraMsg = "";
+      this.jiraNote = `Connected as ${who}`;
+      this.fields[3].set_value("");
+      this.input.focus();
+      await this.loadPool(cx);
+    });
+  }
+
   async create() {
-    const branch = this.text.trim();
+    const branch = this.tickets[this.tat]?.key ?? this.text.trim();
     if (!branch) return "Type a branch name.";
     const path = `${ROOT(this.userHome)}/${this.repo.name}/${slug(branch)}`;
     const exists = (await git(this.repo.main, ["show-ref", "--verify", "--quiet", `refs/heads/${branch}`], this.on)).ok;
@@ -238,6 +358,26 @@ export default class Worktree extends View {
   }
 
   key(e, cx) {
+    if (this.jira) {
+      const ctrl = e.modifiers?.control;
+      if (e.key === "escape" && this.form && this.creds) { this.form = false; this.input.focus(); cx.stop_propagation(); return cx.notify(); }
+      if (!this.form && e.key !== "escape") {
+        const n = this.tickets.length;
+        if (ctrl && e.key === "j") { this.openForm(cx); cx.stop_propagation(); return; }
+        if (e.key === "tab" && this.tickets[this.tat]) {
+          this.text = this.tickets[this.tat].key;
+          this.input.set_value(this.text);
+          cx.stop_propagation();
+          return cx.notify();
+        }
+        if (n && (e.key === "down" || e.key === "up" || (ctrl && (e.key === "n" || e.key === "p")))) {
+          const d = e.key === "down" || e.key === "n" ? 1 : -1;
+          this.tat = ((this.tat + 1 + d + (n + 1)) % (n + 1)) - 1;
+          cx.stop_propagation();
+          return cx.notify();
+        }
+      }
+    }
     if (e.key === "escape") return this.close();
     if (this.opening) {
       const n = this.shown().length;
@@ -319,6 +459,47 @@ export default class Worktree extends View {
       .child(h_flex().justify_end().text_size(11).text_color(t.dim).child("\u2191\u2193 choose \u00b7 \u21b5 open \u00b7 esc close"));
   }
 
+  renderJira(t, cx) {
+    const box = (state) => Input.new(state).h(32).px(10).items_center().rounded(6).border(1).border_color(t.input).bg(t.background).text_color(t.foreground);
+    if (this.form) {
+      return v_flex().gap(8).flex_1().min_h(0)
+        .child(div().text_size(11.5).text_color(t.dim).child("Connect Jira. Stored in the macOS Keychain, never in the dotfiles."))
+        .children(this.fields.map(box))
+        .when(Boolean(this.jiraMsg), (el) => el.child(div().text_size(11.5).text_color(t.blocked).child(this.jiraMsg)))
+        .child(div().text_size(11).text_color(t.dim).child(this.verifying ? "Checking with Jira…" : "↵ next / verify and save · esc back"));
+    }
+    if (this.creds === undefined) return div().flex_1().text_color(t.muted).child("…");
+    if (this.creds === null) {
+      return v_flex().flex_1().min_h(0).child(
+        h_flex().id("jira-connect").h(44).px(10).items_center().rounded(7).cursor_pointer().hover((s) => s.bg(t.hover))
+          .on_click(() => this.openForm(cx))
+          .child(div().text_color(t.accent).child("Connect Jira to pick a ticket…")),
+      );
+    }
+    return v_flex().flex_1().min_h(0).gap(4)
+      .when(Boolean(this.jiraMsg), (el) => el.child(div().text_size(11.5).text_color(t.blocked).child(this.jiraMsg)))
+      .when(Boolean(this.jiraNote || this.searching) && !this.jiraMsg, (el) => el.child(div().text_size(11.5).text_color(t.dim).child(this.searching ? "Searching Jira…" : this.jiraNote)))
+      .child(
+        div().relative().flex_1().min_h(0)
+          .child(
+            v_flex().id("jira-list").size_full().overflow_y_scroll()
+              .children(this.tickets.map((k, i) => {
+                const on = i === this.tat;
+                return v_flex().id(`jira-${i}`).flex_none().h(40).px(10).justify_center().rounded(7).cursor_pointer()
+                  .when(on, (el) => el.bg(t.selected))
+                  .when(!on, (el) => el.hover((s) => s.bg(t.hover)))
+                  .on_click(() => { this.tat = i; this.go(cx); })
+                  .child(h_flex().gap(8).items_center()
+                    .child(div().flex_none().font_semibold().text_color(t.foreground).child(k.key))
+                    .child(div().flex_1().min_w(0).truncate().text_color(k.done ? t.dim : t.foreground).child(k.summary))
+                    .child(div().flex_none().text_size(11).text_color(t.dim).child(k.status)));
+              }))
+              .when(this.tickets.length === 0 && !this.jiraMsg, (el) => el.child(div().p(10).text_color(t.dim).child(!this.poolReady ? "Loading tickets…" : this.searching ? "" : `No matching tickets${this.text.trim() ? ` · ↵ creates branch "${this.text.trim()}"` : ""}`))),
+          )
+          .child(Scrollbar.vertical("jira-list").absolute().inset_0()),
+      );
+  }
+
   render(cx) {
     const t = theme();
     if (this.opening) return this.renderOpen(t);
@@ -364,7 +545,8 @@ export default class Worktree extends View {
         ),
       )
       .when(Boolean(this.error), (el) => el.child(div().text_color(t.blocked).child(this.error)))
-      .child(div().flex_1())
+      .when(!remove && !blocked && this.jira, (el) => el.child(this.renderJira(t, cx)))
+      .when(!(this.jira && !remove && !blocked), (el) => el.child(div().flex_1()))
       .child(
         h_flex()
           .justify_end()
@@ -372,7 +554,7 @@ export default class Worktree extends View {
           .text_color(t.dim)
           .gap(6)
           .when(this.busy, (el) => el.child(div().frames(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"], 90)))
-          .child(this.busy ? "working…" : blocked ? "esc close" : remove ? "↵ remove · esc cancel" : "↵ create · esc cancel"),
+          .child(this.busy ? "working…" : blocked ? "esc close" : remove ? "↵ remove · esc cancel" : this.jira && this.creds && !this.form ? "↑↓ ticket · ⇥ fill · ctrl+j jira · ↵ create · esc cancel" : "↵ create · esc cancel"),
       );
   }
 }

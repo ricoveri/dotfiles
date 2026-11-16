@@ -11,7 +11,7 @@ const ROW = 34, VISIBLE = 10;
 const HIDE = new Set(["app.palette", "overlay.close"]);
 // Not app commands: they open the shipped worktree dialog, as the + menu does.
 const EXTRA = [
-  { name: "worktree.new", about: "New git worktree for the current repo (opens the worktree dialog).", args: [], dialog: { action: "new", width: 460, height: 280 } },
+  { name: "worktree.new", about: "New git worktree for the current repo (opens the worktree dialog).", args: [], dialog: { action: "new", width: 560, height: 480 } },
   { name: "worktree.open", about: "Open an existing worktree of the current repo.", args: [], dialog: { action: "open", width: 560, height: 480 } },
 ];
 const SYM = { cmd: "⌘", ctrl: "⌃", alt: "⌥", shift: "⇧" };
